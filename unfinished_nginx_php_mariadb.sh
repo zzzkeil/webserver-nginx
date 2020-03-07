@@ -367,16 +367,16 @@ proxy_read_timeout 3600;
 proxy_redirect off;
 "  > /etc/nginx/proxy.conf
 ###create a header configuration file
-echo "add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
+echo 'add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
 add_header X-Robots-Tag none; add_header X-Download-Options noopen;
 add_header X-Permitted-Cross-Domain-Policies none;
 add_header X-Content-Type-Options "nosniff" always;
 add_header X-XSS-Protection "1; mode=block" always;
 add_header Referrer-Policy "no-referrer" always;
 add_header X-Frame-Options "SAMEORIGIN";
-"  > /etc/nginx/header.conf
+'  > /etc/nginx/header.conf
 ###create a nginx optimization file
-echo "fastcgi_hide_header X-Powered-By;
+echo 'fastcgi_hide_header X-Powered-By;
 fastcgi_read_timeout 3600;
 fastcgi_send_timeout 3600;
 fastcgi_connect_timeout 3600;
@@ -393,7 +393,7 @@ gzip_min_length 256;
 gzip_proxied expired no-cache no-store private no_last_modified no_etag auth;
 gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject application/x-font-ttf application/x-web-app-manifest+json application/xhtml+xml application/xml font/opentype image/bmp image/svg+xml image/x-icon text/cache-manifest text/css text/plain text/vcard text/vnd.rim.location.xloc text/vtt text/x-component text/x-cross-domain-policy;
 gzip_disable "MSIE [1-6]\.";
-" > /etc/nginx/optimization.conf
+' > /etc/nginx/optimization.conf
 ###create a nginx php optimization file
 echo "fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
 fastcgi_param PATH_INFO \$path_info;
