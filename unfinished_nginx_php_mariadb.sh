@@ -1,7 +1,7 @@
 #!/bin/bash
 clear
 echo " #############################################"
-echo " # TEST Only                                 #"
+echo " # TEST Only   2                             #"
 echo " # Inspired by a script from  c-rieger.de    #"
 echo " # !!!! Run base_server_setup.sh first !!!!  #"
 echo " #############################################"
