@@ -303,6 +303,10 @@ location ~ \.php$ {
 #ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
 #ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
 #
+# logs
+access_log /var/log/nginx/$servername.access.log;
+error_log /var/log/nginx/$servername.error.log warn;
+#
 }
 " > /etc/nginx/conf.d/$servername.conf
 ###create a Let's Encrypt vhost file
