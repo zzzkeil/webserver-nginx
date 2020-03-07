@@ -63,8 +63,7 @@ GRANT ALL PRIVILEGES on $databasename.* to $databaseuser@localhost;
 FLUSH privileges;
 EOF
 ###prepare NGINX for Site and SSL
-cat <<EOF >/etc/nginx/conf.d/$servername.conf
-server {
+echo"server {
 server_name $servername;
 listen 80;
 listen [::]:80;
@@ -73,13 +72,13 @@ proxy_pass http://127.0.0.1:81;
 proxy_set_header Host \$host;
 }
 }
-EOF
+" > /etc/nginx/conf.d/$servername.conf
 
-cat <<EOF >/etc/nginx/ssl.conf
+echo"
 #ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
 #ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
 #ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
-EOF
+" >> /etc/nginx/ssl.conf
 
 
 ###restart NGINX
@@ -93,8 +92,7 @@ errorSSL
 else
 copy4SSL
 mv /etc/nginx/conf.d/$servername.conf /etc/nginx/conf.d/$servername.conf.bak
-cat <<EOF >/etc/nginx/conf.d/$servername.conf
-server {
+echo "server {
 server_name $servername;
 listen 80;
 listen [::]:80;
@@ -120,7 +118,7 @@ location ~ \.php$ {
     fastcgi_param SCRIPT_FILENAME var/www/$servername/$fastcgi_script_name;
 }
 }
-EOF
+" > /etc/nginx/conf.d/$servername.conf
 sed -i "s/server_name.*;/server_name $servername;/" /etc/nginx/conf.d/$servername.conf
 sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
 fi
