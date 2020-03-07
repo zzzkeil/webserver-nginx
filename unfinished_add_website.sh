@@ -71,8 +71,8 @@ EOF
 cat <<EOF >/etc/nginx/conf.d/$servername.conf
 server {
 server_name $servername;
-listen 80 default_server;
-listen [::]:80 default_server;
+listen 80;
+listen [::]:80;
 location ^~ /.well-known/acme-challenge {
 proxy_pass http://127.0.0.1:81;
 proxy_set_header Host \$host;
@@ -83,13 +83,12 @@ return 301 https://\$host\$request_uri;
 }
 server {
 server_name $servername;
-listen 443 ssl http2 default_server;
-listen [::]:443 ssl http2 default_server;
+listen 443 ssl http2;
+listen [::]:443 ssl http2;
 root /var/www/$servername;
 index index.php index.html index.htm;
 
 location ~ \.php$ {
-    try_files $uri =404;
     include /etc/nginx/fastcgi_params;
     fastcgi_pass unix:/run/php/php7.4-fpm.sock;
     fastcgi_index index.php;
