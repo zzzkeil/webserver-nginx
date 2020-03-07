@@ -296,7 +296,7 @@ location ~ \.php$ {
     include /etc/nginx/fastcgi_params;
     fastcgi_pass unix:/run/php/php7.4-fpm.sock;
     fastcgi_index index.php;
-    fastcgi_param SCRIPT_FILENAME var/www/$servername/$fastcgi_script_name;
+    fastcgi_param SCRIPT_FILENAME var/www/$servername/\$fastcgi_script_name;
 }
 }
 " > /etc/nginx/conf.d/$servername.conf
