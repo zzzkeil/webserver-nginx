@@ -75,9 +75,11 @@ proxy_set_header Host \$host;
 " > /etc/nginx/conf.d/$servername.conf
 
 echo"
+# letsencrypt for $servername
 #ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
 #ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
 #ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
+#
 " >> /etc/nginx/ssl.conf
 
 
