@@ -24,7 +24,13 @@ read -p "sitename: " -e -i exsample.domain servername
 read -p "sql databasename: " -e -i db$randomkey1 databasename
 read -p "sql databaseuser: " -e -i dbuser$randomkey2 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
-
+echo"
+$servername
+databasename : $databasename
+databaseuser : $databaseuser
+databaseuserpasswd : $databaseuserpasswd
+#
+" >> /root/mysql_database_list.txt
 
 ###
 function copy4SSL() {
