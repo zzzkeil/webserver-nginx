@@ -27,7 +27,7 @@ fi
 randomkey1=$(</dev/urandom tr -dc '0-9' | head -c 6  ; echo)
 randomkey2=$(</dev/urandom tr -dc '0-9' | head -c 6  ; echo)
 randomkey3=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 12  ; echo)
-read -p "sitename: " -e -i exsample.domain servername
+read -p "sitename: " -e -i example.domain servername
 read -p "sql databasename: " -e -i db$randomkey1 databasename
 read -p "sql databaseuser: " -e -i dbuser$randomkey2 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
