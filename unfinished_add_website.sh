@@ -24,7 +24,7 @@ read -p "sitename: " -e -i exsample.domain servername
 read -p "sql databasename: " -e -i db$randomkey1 databasename
 read -p "sql databaseuser: " -e -i dbuser$randomkey2 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
-echo"
+echo "
 $servername
 databasename : $databasename
 databaseuser : $databaseuser
@@ -69,7 +69,7 @@ GRANT ALL PRIVILEGES on $databasename.* to $databaseuser@localhost;
 FLUSH privileges;
 EOF
 ###prepare NGINX for Site and SSL
-echo"server {
+echo "server {
 server_name $servername;
 listen 80;
 listen [::]:80;
@@ -80,7 +80,7 @@ proxy_set_header Host \$host;
 }
 " > /etc/nginx/conf.d/$servername.conf
 
-echo"
+echo "
 # letsencrypt for $servername
 #ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
 #ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
