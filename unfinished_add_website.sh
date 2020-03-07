@@ -17,17 +17,13 @@ if [[ "$EUID" -ne 0 ]]; then
 	exit 1
 fi
 
-if [[ -e /etc/debian_version ]]; then
-      echo "Debian Distribution"
-      else
-      echo "This is not a Debian Distribution."
-      exit 1
-fi
-
+randomkey1=$(</dev/urandom tr -dc '0-9' | head -c 6  ; echo)
+randomkey2=$(</dev/urandom tr -dc '0-9' | head -c 6  ; echo)
+randomkey3=$(</dev/urandom tr -dc 'A-Za-z0-9!"#.:-_' | head -c 12  ; echo)
 read -p "sitename: " -e -i exsample.domain servername
-read -p "sql databasename: " -e -i db_$servername databasename
-read -p "sql databaseuser: " -e -i dbuser_$servername databaseuser
-read -p "sql databaseuserpasswd: " -e -i w2dK3=4c.3Z! databaseuserpasswd
+read -p "sql databasename: " -e -i db$randomkey1 databasename
+read -p "sql databaseuser: " -e -i dbuser$randomkey2 databaseuser
+read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
 
 
 ###
@@ -77,25 +73,7 @@ location ^~ /.well-known/acme-challenge {
 proxy_pass http://127.0.0.1:81;
 proxy_set_header Host \$host;
 }
-location / {
-return 301 https://\$host\$request_uri;
 }
-}
-server {
-server_name $servername;
-listen 443 ssl http2;
-listen [::]:443 ssl http2;
-root /var/www/$servername;
-index index.php index.html index.htm;
-
-location ~ \.php$ {
-    include /etc/nginx/fastcgi_params;
-    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
-    fastcgi_index index.php;
-    fastcgi_param SCRIPT_FILENAME var/www/$servername/$fastcgi_script_name;
-}
-}
-
 EOF
 
 cat <<EOF >/etc/nginx/ssl.conf
@@ -115,6 +93,35 @@ if [ ! -d "/etc/letsencrypt/live" ]; then
 errorSSL
 else
 copy4SSL
+mv /etc/nginx/conf.d/$servername.conf /etc/nginx/conf.d/$servername.conf.bak
+cat <<EOF >/etc/nginx/conf.d/$servername.conf
+server {
+server_name $servername;
+listen 80;
+listen [::]:80;
+location ^~ /.well-known/acme-challenge {
+proxy_pass http://127.0.0.1:81;
+proxy_set_header Host \$host;
+}
+location / {
+return 301 https://\$host\$request_uri;
+}
+}
+server {
+server_name $servername;
+listen 443 ssl http2;
+listen [::]:443 ssl http2;
+root /var/www/$servername;
+index index.php index.html index.htm;
+
+location ~ \.php$ {
+    include /etc/nginx/fastcgi_params;
+    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME var/www/$servername/$fastcgi_script_name;
+}
+}
+EOF
 sed -i "s/server_name.*;/server_name $servername;/" /etc/nginx/conf.d/$servername.conf
 sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
 fi
