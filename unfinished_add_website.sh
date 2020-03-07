@@ -25,8 +25,8 @@ if [[ -e /etc/debian_version ]]; then
 fi
 
 read -p "sitename: " -e -i exsample.domain servername
-read -p "sql databasename: " -e -i db002 databasename
-read -p "sql databaseuser: " -e -i dbuser200 databaseuser
+read -p "sql databasename: " -e -i db_$servername databasename
+read -p "sql databaseuser: " -e -i dbuser_$servername databaseuser
 read -p "sql databaseuserpasswd: " -e -i w2dK3=4c.3Z! databaseuserpasswd
 
 
