@@ -1,7 +1,7 @@
 #!/bin/bash
 clear
 echo " #############################################"
-echo " # Setup server config Netcup Ubuntu 18.04   #"
+echo " # TEST Only                                 #"
 echo " # Inspired by a script from  c-rieger.de    #"
 echo " # !!!! Run base_server_setup.sh first !!!!  #"
 echo " #############################################"
@@ -23,17 +23,14 @@ if [[ "$EUID" -ne 0 ]]; then
 	exit 1
 fi
 
-if [[ -e /etc/debian_version ]]; then
-      echo "Debian Distribution"
-      else
-      echo "This is not a Debian Distribution."
-      exit 1
-fi
 
+randomkey1=$(</dev/urandom tr -dc '0-9' | head -c 6  ; echo)
+randomkey2=$(</dev/urandom tr -dc '0-9' | head -c 6  ; echo)
+randomkey3=$(</dev/urandom tr -dc 'A-Za-z0-9!"#.:-_' | head -c 12  ; echo)
 read -p "sitename: " -e -i exsample.domain servername
-read -p "sql databasename: " -e -i db001 databasename
-read -p "sql databaseuser: " -e -i dbuser100 databaseuser
-read -p "sql databaseuserpasswd: " -e -i m!dW9=2d.3U" databaseuserpasswd
+read -p "sql databasename: " -e -i db$randomkey1 databasename
+read -p "sql databaseuser: " -e -i dbuser$randomkey2 databaseuser
+read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
 ufw allow 80/tcp
 ufw allow 443/tcp
 
@@ -89,8 +86,7 @@ apt install nginx -y
 systemctl enable nginx.service
 ### prepare the NGINX
 mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak && touch /etc/nginx/nginx.conf
-cat <<EOF >/etc/nginx/nginx.conf
-user www-data;
+echo"user www-data;
 worker_processes auto;
 pid /var/run/nginx.pid;
 events {
@@ -127,7 +123,7 @@ resolver 127.0.0.53 valid=30s;
 resolver_timeout 5s;
 include /etc/nginx/conf.d/*.conf;
 }
-EOF
+" > /etc/nginx/nginx.conf
 ###restart NGINX
 /usr/sbin/service nginx restart
 ###create folders
@@ -176,8 +172,7 @@ apt update && apt install mariadb-server -y
 /usr/sbin/service mysql stop
 ###configure MariaDB
 mv /etc/mysql/my.cnf /etc/mysql/my.cnf.bak
-cat <<EOF >/etc/mysql/my.cnf
-[client]
+echo"[client]
 default-character-set = utf8mb4
 port = 3306
 [mysqld_safe]
@@ -249,7 +244,7 @@ quick
 quote-names
 [isamchk]
 key_buffer = 16M
-EOF
+" > /etc/mysql/my.cnf
 /usr/sbin/service mysql restart
 ###restart MariaDB server and connect to MariaDB to create the database
 /usr/sbin/service mysql restart && mysql -uroot <<EOF
@@ -271,8 +266,7 @@ apt install ssl-cert -y
 ###prepare NGINX for Site and SSL
 [ -f /etc/nginx/conf.d/default.conf ] && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 touch /etc/nginx/conf.d/default.conf
-cat <<EOF >/etc/nginx/conf.d/$servername.conf
-server {
+echo"server {
 server_name $servername;
 listen 80 default_server;
 listen [::]:80 default_server;
@@ -299,12 +293,10 @@ location ~ \.php$ {
     fastcgi_param SCRIPT_FILENAME var/www/$servername/$fastcgi_script_name;
 }
 }
-
-EOF
+" > /etc/nginx/conf.d/$servername.conf
 ###create a Let's Encrypt vhost file
 touch /etc/nginx/conf.d/letsencrypt.conf
-cat <<EOF >/etc/nginx/conf.d/letsencrypt.conf
-server
+echo"server
 {
 server_name 127.0.0.1;
 listen 127.0.0.1:81 default_server;
@@ -315,17 +307,10 @@ default_type text/plain;
 root /var/www/letsencrypt;
 }
 }
-EOF
+" > /etc/nginx/conf.d/letsencrypt.conf
 ###create a ssl configuration file
 touch /etc/nginx/ssl.conf
-cat <<EOF >/etc/nginx/ssl.conf
-ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
-ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
-ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
-#ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
-#ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
-#ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
-ssl_dhparam /etc/ssl/certs/dhparam.pem;
+echo"ssl_dhparam /etc/ssl/certs/dhparam.pem;
 ssl_session_timeout 1d;
 ssl_session_cache shared:SSL:50m;
 ssl_session_tickets off;
@@ -335,10 +320,18 @@ ssl_ecdh_curve X448:secp521r1:secp384r1:prime256v1;
 ssl_prefer_server_ciphers on;
 ssl_stapling on;
 ssl_stapling_verify on;
-EOF
+#
+ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
+ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+#
+#ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
+#ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
+#ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
+#
+" > /etc/nginx/ssl.conf
 ###add a default dhparam.pem file // https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096
-touch /etc/ssl/certs/dhparam.pem
-cat <<EOF >/etc/ssl/certs/dhparam.pem
+echo"
 -----BEGIN DH PARAMETERS-----
 MIICCAKCAgEA1Lt9BH+NFx22WWuY9r8hbmYTghcUeuLA6N/s9RDwNXbkltOIfRFt
 BYf60pdztT9DZPw/HBbp9sP4iUlSkFNfC7N2yzsCM6E7n/EPk2rNi9vGFpy2m93h
@@ -352,11 +345,10 @@ z62RXXcnwJWJzCbiZ0RrZSboCmPXmsw55lYLDgd4vrBoqmQ/wVBeExjsbMjRw715
 w82wwEeao49/qWEpTUKUWjpHpXyYEssW4bLDTOtMwcfmOSW/oLfh/uff9s30sJGh
 OBvmFAJNoAQ6U/09Rx5HQGF5xMHAcB89axi09q8F1ph+RFpmSoJZB/sCAQI=
 -----END DH PARAMETERS-----
-EOF
+" > /etc/ssl/certs/dhparam.pem
 ###create a proxy configuration file
-touch /etc/nginx/proxy.conf
-cat <<EOF >/etc/nginx/proxy.conf
-proxy_set_header Host \$host;
+
+echo"proxy_set_header Host \$host;
 proxy_set_header X-Real-IP \$remote_addr;
 proxy_set_header X-Forwarded-Host \$host;
 proxy_set_header X-Forwarded-Protocol \$scheme;
@@ -367,22 +359,18 @@ proxy_connect_timeout 3600;
 proxy_send_timeout 3600;
 proxy_read_timeout 3600;
 proxy_redirect off;
-EOF
+"  > /etc/nginx/proxy.conf
 ###create a header configuration file
-touch /etc/nginx/header.conf
-cat <<EOF >/etc/nginx/header.conf
-add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
+echo"add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
 add_header X-Robots-Tag none; add_header X-Download-Options noopen;
 add_header X-Permitted-Cross-Domain-Policies none;
 add_header X-Content-Type-Options "nosniff" always;
 add_header X-XSS-Protection "1; mode=block" always;
 add_header Referrer-Policy "no-referrer" always;
 add_header X-Frame-Options "SAMEORIGIN";
-EOF
+"  > /etc/nginx/header.conf
 ###create a nginx optimization file
-touch /etc/nginx/optimization.conf
-cat <<EOF >/etc/nginx/optimization.conf
-fastcgi_hide_header X-Powered-By;
+echo"fastcgi_hide_header X-Powered-By;
 fastcgi_read_timeout 3600;
 fastcgi_send_timeout 3600;
 fastcgi_connect_timeout 3600;
@@ -399,11 +387,9 @@ gzip_min_length 256;
 gzip_proxied expired no-cache no-store private no_last_modified no_etag auth;
 gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject application/x-font-ttf application/x-web-app-manifest+json application/xhtml+xml application/xml font/opentype image/bmp image/svg+xml image/x-icon text/cache-manifest text/css text/plain text/vcard text/vnd.rim.location.xloc text/vtt text/x-component text/x-cross-domain-policy;
 gzip_disable "MSIE [1-6]\.";
-EOF
+" > /etc/nginx/optimization.conf
 ###create a nginx php optimization file
-touch /etc/nginx/php_optimization.conf
-cat <<EOF >/etc/nginx/php_optimization.conf
-fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+echo"fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
 fastcgi_param PATH_INFO \$path_info;
 fastcgi_param modHeadersAvailable true;
 fastcgi_param front_controller_active true;
@@ -414,7 +400,7 @@ fastcgi_request_buffering off;
 fastcgi_cache_valid 404 1m;
 fastcgi_cache_valid any 1h;
 fastcgi_cache_methods GET HEAD;
-EOF
+" > /etc/nginx/php_optimization.conf
 ###enable all nginx configuration files
 sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
 
