@@ -293,7 +293,6 @@ root /var/www/$servername;
 index index.php index.html index.htm;
 
 location ~ \.php$ {
-    try_files $uri =404;
     include /etc/nginx/fastcgi_params;
     fastcgi_pass unix:/run/php/php7.4-fpm.sock;
     fastcgi_index index.php;
