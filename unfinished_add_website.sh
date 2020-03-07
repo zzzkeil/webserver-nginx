@@ -80,14 +80,6 @@ proxy_set_header Host \$host;
 }
 " > /etc/nginx/conf.d/$servername.conf
 
-echo "
-# letsencrypt for $servername
-#ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
-#ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
-#ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
-#
-" >> /etc/nginx/ssl.conf
-
 
 ###restart NGINX
 /usr/sbin/service nginx restart
@@ -125,6 +117,12 @@ location ~ \.php$ {
     fastcgi_index index.php;
     fastcgi_param SCRIPT_FILENAME var/www/$servername/\$fastcgi_script_name;
 }
+
+# letsencrypt for $servername
+ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
+ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
+#
 }
 " > /etc/nginx/conf.d/$servername.conf
 sed -i "s/server_name.*;/server_name $servername;/" /etc/nginx/conf.d/$servername.conf
