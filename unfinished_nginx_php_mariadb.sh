@@ -31,7 +31,7 @@ read -p "sitename: " -e -i exsample.domain servername
 read -p "sql databasename: " -e -i db$randomkey1 databasename
 read -p "sql databaseuser: " -e -i dbuser$randomkey2 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
-echo"
+echo "
 $servername
 databasename : $databasename
 databaseuser : $databaseuser
@@ -93,7 +93,7 @@ apt install nginx -y
 systemctl enable nginx.service
 ### prepare the NGINX
 mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak && touch /etc/nginx/nginx.conf
-echo"user www-data;
+echo "user www-data;
 worker_processes auto;
 pid /var/run/nginx.pid;
 events {
@@ -179,7 +179,7 @@ apt update && apt install mariadb-server -y
 /usr/sbin/service mysql stop
 ###configure MariaDB
 mv /etc/mysql/my.cnf /etc/mysql/my.cnf.bak
-echo"[client]
+echo "[client]
 default-character-set = utf8mb4
 port = 3306
 [mysqld_safe]
@@ -273,7 +273,7 @@ apt install ssl-cert -y
 ###prepare NGINX for Site and SSL
 [ -f /etc/nginx/conf.d/default.conf ] && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 touch /etc/nginx/conf.d/default.conf
-echo"server {
+echo "server {
 server_name $servername;
 listen 80 default_server;
 listen [::]:80 default_server;
@@ -303,7 +303,7 @@ location ~ \.php$ {
 " > /etc/nginx/conf.d/$servername.conf
 ###create a Let's Encrypt vhost file
 touch /etc/nginx/conf.d/letsencrypt.conf
-echo"server
+echo "server
 {
 server_name 127.0.0.1;
 listen 127.0.0.1:81 default_server;
@@ -316,8 +316,7 @@ root /var/www/letsencrypt;
 }
 " > /etc/nginx/conf.d/letsencrypt.conf
 ###create a ssl configuration file
-touch /etc/nginx/ssl.conf
-echo"ssl_dhparam /etc/ssl/certs/dhparam.pem;
+echo "ssl_dhparam /etc/ssl/certs/dhparam.pem;
 ssl_session_timeout 1d;
 ssl_session_cache shared:SSL:50m;
 ssl_session_tickets off;
@@ -338,7 +337,7 @@ ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
 #
 " > /etc/nginx/ssl.conf
 ###add a default dhparam.pem file // https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096
-echo"
+echo "
 -----BEGIN DH PARAMETERS-----
 MIICCAKCAgEA1Lt9BH+NFx22WWuY9r8hbmYTghcUeuLA6N/s9RDwNXbkltOIfRFt
 BYf60pdztT9DZPw/HBbp9sP4iUlSkFNfC7N2yzsCM6E7n/EPk2rNi9vGFpy2m93h
@@ -355,7 +354,7 @@ OBvmFAJNoAQ6U/09Rx5HQGF5xMHAcB89axi09q8F1ph+RFpmSoJZB/sCAQI=
 " > /etc/ssl/certs/dhparam.pem
 ###create a proxy configuration file
 
-echo"proxy_set_header Host \$host;
+echo "proxy_set_header Host \$host;
 proxy_set_header X-Real-IP \$remote_addr;
 proxy_set_header X-Forwarded-Host \$host;
 proxy_set_header X-Forwarded-Protocol \$scheme;
@@ -368,7 +367,7 @@ proxy_read_timeout 3600;
 proxy_redirect off;
 "  > /etc/nginx/proxy.conf
 ###create a header configuration file
-echo"add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
+echo "add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
 add_header X-Robots-Tag none; add_header X-Download-Options noopen;
 add_header X-Permitted-Cross-Domain-Policies none;
 add_header X-Content-Type-Options "nosniff" always;
@@ -377,7 +376,7 @@ add_header Referrer-Policy "no-referrer" always;
 add_header X-Frame-Options "SAMEORIGIN";
 "  > /etc/nginx/header.conf
 ###create a nginx optimization file
-echo"fastcgi_hide_header X-Powered-By;
+echo "fastcgi_hide_header X-Powered-By;
 fastcgi_read_timeout 3600;
 fastcgi_send_timeout 3600;
 fastcgi_connect_timeout 3600;
@@ -396,7 +395,7 @@ gzip_types application/atom+xml application/javascript application/json applicat
 gzip_disable "MSIE [1-6]\.";
 " > /etc/nginx/optimization.conf
 ###create a nginx php optimization file
-echo"fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+echo "fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
 fastcgi_param PATH_INFO \$path_info;
 fastcgi_param modHeadersAvailable true;
 fastcgi_param front_controller_active true;
