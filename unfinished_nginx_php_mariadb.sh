@@ -252,9 +252,6 @@ key_buffer = 16M
 EOF
 /usr/sbin/service mysql restart
 ###restart MariaDB server and connect to MariaDB to create the database
-read -p "sql databasename: " -e -i db001 
-read -p "sql databaseuser: " -e -i dbuser100 
-read -p "sql databaseuserpasswd: " -e -i m!dW9=2d.3U" 
 /usr/sbin/service mysql restart && mysql -uroot <<EOF
 CREATE DATABASE $databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 CREATE USER $databaseuser@localhost identified by '$databaseuserpasswd';
