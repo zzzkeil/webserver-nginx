@@ -298,6 +298,11 @@ location ~ \.php$ {
     fastcgi_index index.php;
     fastcgi_param SCRIPT_FILENAME var/www/$servername/\$fastcgi_script_name;
 }
+# letsencrypt for $servername
+#ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
+#ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
+#ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
+#
 }
 " > /etc/nginx/conf.d/$servername.conf
 ###create a Let's Encrypt vhost file
@@ -329,11 +334,6 @@ ssl_stapling_verify on;
 ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
 ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
 ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
-# letsencrypt for $servername
-#ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
-#ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
-#ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
-#
 " > /etc/nginx/ssl.conf
 ###add a default dhparam.pem file // https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096
 echo "
@@ -426,7 +426,7 @@ else
 copy4SSL
 sed -i '/ssl-cert-snakeoil/d' /etc/nginx/ssl.conf
 sed -i "s/server_name.*;/server_name $servername;/" /etc/nginx/conf.d/$servername.conf
-sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
+sed -i s/\#\ssl/\ssl/g /etc/nginx/conf.d/$servername.conf
 sed -i s/ssl_dhparam/\#ssl_dhparam/g /etc/nginx/ssl.conf
 fi
 systemctl restart nginx.service
