@@ -1,15 +1,9 @@
 #!/bin/bash
 clear
-echo " #############################################"
-echo " # Setup server config Netcup Ubuntu 18.04   #"
-echo " # Inspired by a script from  c-rieger.de    #"
-echo " # !!!! Run base_server_setup.sh first !!!!  #"
-echo " #############################################"
 echo ""
 echo ""
 echo "To EXIT this script press  [ENTER]"
 echo 
-echo " # !!!! Run base_server_setup.sh first !!!!  #"
 read -p "To RUN this script press  [Y]" -n 1 -r
 echo
 echo
