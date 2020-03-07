@@ -324,7 +324,7 @@ ssl_stapling_verify on;
 ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
 ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
 ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
-#
+# letsencrypt for $servername
 #ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
 #ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
 #ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
