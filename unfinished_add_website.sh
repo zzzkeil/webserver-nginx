@@ -17,8 +17,8 @@ if [[ "$EUID" -ne 0 ]]; then
 	exit 1
 fi
 
-randomkey1=$(</dev/urandom tr -dc '0-9' | head -c 6  ; echo)
-randomkey2=$(</dev/urandom tr -dc '0-9' | head -c 6  ; echo)
+randomkey1=$(date +%s)
+randomkey2=$(date +%s)
 randomkey3=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 12  ; echo)
 read -p "sitename: " -e -i example.domain servername
 read -p "sql databasename: " -e -i db$randomkey1 databasename
