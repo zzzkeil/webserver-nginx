@@ -109,7 +109,9 @@ listen 443 ssl http2;
 listen [::]:443 ssl http2;
 root /var/www/$servername;
 index index.php index.html index.htm;
-
+location / {
+		try_files $uri $uri/ =404;
+	}
 location ~ \.php$ {
     include /etc/nginx/fastcgi_params;
     fastcgi_pass unix:/run/php/php7.4-fpm.sock;
