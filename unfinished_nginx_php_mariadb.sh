@@ -25,12 +25,11 @@ fi
 
 
 read -p "sitename: " -e -i example.domain servername
-randomkey1=$(date +%s)
+randomkey1=$(date +%s | cut -c 3-)
 read -p "sql databasename: " -e -i db$randomkey1 databasename
-randomkey2=$(date +%s)
-read -p "sql databaseuser: " -e -i dbuser$randomkey2 databaseuser
-randomkey3=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 12  ; echo)
-read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
+read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
+randomkey2=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 12  ; echo)
+read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
 echo "
 $servername
 databasename : $databasename
@@ -47,13 +46,6 @@ apt update
 apt upgrade -y
 apt autoclean -y
 apt autoremove -y
-}
-###global function to restart all cloud services
-function restart_all_services() {
-/usr/sbin/service nginx restart
-/usr/sbin/service mysql restart
-/usr/sbin/service redis-server restart
-/usr/sbin/service php7.4-fpm restart
 }
 ###
 function copy4SSL() {
