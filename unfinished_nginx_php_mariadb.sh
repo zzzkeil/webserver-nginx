@@ -295,9 +295,9 @@ location ~ \.php$ {
     fastcgi_param SCRIPT_FILENAME var/www/$servername/\$fastcgi_script_name;
 }
 # letsencrypt for $servername
-ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
-ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
+#ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
+#ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
+#ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
 #
 # logs
 access_log /var/log/nginx/$servername.access.log;
