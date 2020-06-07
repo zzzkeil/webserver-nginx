@@ -1,7 +1,7 @@
 #!/bin/bash
 clear
 echo " #############################################"
-echo " # TEST Only   2                             #"
+echo " # TEST Only   3                             #"
 echo " # Inspired by a script from  c-rieger.de    #"
 echo " # !!!! Run base_server_setup.sh first !!!!  #"
 echo " #############################################"
@@ -24,7 +24,7 @@ if [[ "$EUID" -ne 0 ]]; then
 fi
 
 
-read -p "sitename: " -e -i example.domain servername
+read -p "sitename: " -e -i your.domain servername
 randomkey1=$(date +%s | cut -c 3-)
 read -p "sql databasename: " -e -i db$randomkey1 databasename
 read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
@@ -80,7 +80,7 @@ apt install software-properties-common zip unzip screen git wget ffmpeg libfile-
 #apt remove nginx nginx-common nginx-full -y --allow-change-held-packages
 ###instal NGINX using TLSv1.3, OpenSSL 1.1.1
 update_and_clean
-apt install nginx -y
+apt install nginx letsencrypt -y
 ###enable NGINX autostart
 systemctl enable nginx.service
 ### prepare the NGINX
@@ -265,7 +265,7 @@ apt install ssl-cert -y
 ###prepare NGINX for Site and SSL
 [ -f /etc/nginx/conf.d/default.conf ] && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 touch /etc/nginx/conf.d/default.conf
-echo "server {
+echo 'server {
 server_name $servername;
 listen 80 default_server;
 listen [::]:80 default_server;
@@ -284,8 +284,8 @@ listen [::]:443 ssl http2 default_server;
 root /var/www/$servername;
 index index.php index.html index.htm;
 location / {
-		try_files $uri $uri/ =404;
-	}
+                try_files $uri $uri/ =404;
+        }
 location ~ \.php$ {
     include /etc/nginx/fastcgi_params;
     fastcgi_pass unix:/run/php/php7.4-fpm.sock;
@@ -302,7 +302,7 @@ access_log /var/log/nginx/$servername.access.log;
 error_log /var/log/nginx/$servername.error.log warn;
 #
 }
-" > /etc/nginx/conf.d/$servername.conf
+' > /etc/nginx/conf.d/$servername.conf
 ###create a Let's Encrypt vhost file
 touch /etc/nginx/conf.d/letsencrypt.conf
 echo "server
@@ -412,9 +412,9 @@ sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
 /usr/sbin/service nginx restart
 #openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
 
-add-apt-repository ppa:certbot/certbot -y
-apt update
-apt install letsencrypt -y
+
+
+
 letsencrypt certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $servername
 #letsencrypt certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $servername
 
