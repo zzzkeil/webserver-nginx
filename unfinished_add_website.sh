@@ -83,7 +83,7 @@ proxy_set_header Host \$host;
 ###restart NGINX
 /usr/sbin/service nginx restart
 
-letsencrypt certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d '$servername,*.$servername'
+letsencrypt certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d '$servername,www.$servername'
 #letsencrypt certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $servername
 
 if [ ! -d "/etc/letsencrypt/live" ]; then
@@ -94,7 +94,7 @@ mv /etc/nginx/conf.d/$servername.conf /etc/nginx/conf.d/$servername.conf.bak
 touch /etc/nginx/conf.d/$servername.conf
 cat <<EOF >/etc/nginx/conf.d/$servername.conf
 server {
-server_name $servername;
+server_name $servername www.$servername;
 listen 80;
 listen [::]:80;
 location ^~ /.well-known/acme-challenge {
@@ -106,7 +106,7 @@ return 301 https://\$host\$request_uri;
 }
 }
 server {
-server_name $servername;
+server_name $servername www.$servername;
 listen 443 ssl http2;
 listen [::]:443 ssl http2;
 root /var/www/$servername;
