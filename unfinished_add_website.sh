@@ -83,7 +83,7 @@ proxy_set_header Host \$host;
 ###restart NGINX
 /usr/sbin/service nginx restart
 
-letsencrypt certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $servername
+letsencrypt certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d '$servername,*.$servername'
 #letsencrypt certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $servername
 
 if [ ! -d "/etc/letsencrypt/live" ]; then
