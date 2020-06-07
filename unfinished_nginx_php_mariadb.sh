@@ -54,7 +54,7 @@ cp /etc/nginx/ssl.conf /etc/nginx/ssl.conf.orig
 }
 ###
 function errorSSL() {
-clear
+
 echo "!!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!!"
 echo "*** ERROR while requesting your certificate(s) ***"
 echo ""
@@ -412,7 +412,6 @@ errorSSL
 else
 copy4SSL
 sed -i '/ssl-cert-snakeoil/d' /etc/nginx/ssl.conf
-sed -i "s/server_name.*;/server_name $servername;/" /etc/nginx/conf.d/$servername.conf
 sed -i s/\#\ssl/\ssl/g /etc/nginx/conf.d/$servername.conf
 sed -i s/ssl_dhparam/\#ssl_dhparam/g /etc/nginx/ssl.conf
 fi
