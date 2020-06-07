@@ -305,7 +305,20 @@ error_log /var/log/nginx/$servername.error.log warn;
 #
 }
 EOF
-
+###create a Let's Encrypt vhost file
+touch /etc/nginx/conf.d/letsencrypt.conf
+echo "server
+{
+server_name 127.0.0.1;
+listen 127.0.0.1:81 default_server;
+charset utf-8;
+location ^~ /.well-known/acme-challenge
+{
+default_type text/plain;
+root /var/www/letsencrypt;
+}
+}
+" > /etc/nginx/conf.d/letsencrypt.conf
 ###create a ssl configuration file
 echo "ssl_dhparam /etc/ssl/certs/dhparam.pem;
 ssl_session_timeout 1d;
