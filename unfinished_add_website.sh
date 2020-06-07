@@ -91,7 +91,7 @@ errorSSL
 else
 copy4SSL
 mv /etc/nginx/conf.d/$servername.conf /etc/nginx/conf.d/$servername.conf.bak
-echo "server {
+echo 'server {
 server_name $servername;
 listen 80;
 listen [::]:80;
@@ -129,7 +129,7 @@ access_log /var/log/nginx/$servername.access.log;
 error_log /var/log/nginx/$servername.error.log warn;
 #
 }
-" > /etc/nginx/conf.d/$servername.conf
+' > /etc/nginx/conf.d/$servername.conf
 sed -i "s/server_name.*;/server_name $servername;/" /etc/nginx/conf.d/$servername.conf
 sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
 fi
