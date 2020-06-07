@@ -265,10 +265,12 @@ apt install ssl-cert -y
 ###prepare NGINX for Site and SSL
 [ -f /etc/nginx/conf.d/default.conf ] && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 touch /etc/nginx/conf.d/default.conf
-echo 'server {
+touch /etc/nginx/conf.d/$servername.conf
+cat <<EOF >/etc/nginx/conf.d/$servername.conf
+server {
 server_name $servername;
-listen 80 default_server;
-listen [::]:80 default_server;
+listen 80;
+listen [::]:80;
 location ^~ /.well-known/acme-challenge {
 proxy_pass http://127.0.0.1:81;
 proxy_set_header Host \$host;
@@ -279,13 +281,13 @@ return 301 https://\$host\$request_uri;
 }
 server {
 server_name $servername;
-listen 443 ssl http2 default_server;
-listen [::]:443 ssl http2 default_server;
+listen 443 ssl http2;
+listen [::]:443 ssl http2;
 root /var/www/$servername;
 index index.php index.html index.htm;
 location / {
-                try_files $uri $uri/ =404;
-        }
+		try_files $uri $uri/ =404;
+	}
 location ~ \.php$ {
     include /etc/nginx/fastcgi_params;
     fastcgi_pass unix:/run/php/php7.4-fpm.sock;
@@ -293,30 +295,17 @@ location ~ \.php$ {
     fastcgi_param SCRIPT_FILENAME var/www/$servername/\$fastcgi_script_name;
 }
 # letsencrypt for $servername
-#ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
-#ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
-#ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
+ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
+ssl_trusted_certificate /etc/letsencrypt/live/$servername/chain.pem;
 #
 # logs
 access_log /var/log/nginx/$servername.access.log;
 error_log /var/log/nginx/$servername.error.log warn;
 #
 }
-' > /etc/nginx/conf.d/$servername.conf
-###create a Let's Encrypt vhost file
-touch /etc/nginx/conf.d/letsencrypt.conf
-echo "server
-{
-server_name 127.0.0.1;
-listen 127.0.0.1:81 default_server;
-charset utf-8;
-location ^~ /.well-known/acme-challenge
-{
-default_type text/plain;
-root /var/www/letsencrypt;
-}
-}
-" > /etc/nginx/conf.d/letsencrypt.conf
+EOF
+
 ###create a ssl configuration file
 echo "ssl_dhparam /etc/ssl/certs/dhparam.pem;
 ssl_session_timeout 1d;
