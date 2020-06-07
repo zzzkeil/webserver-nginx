@@ -268,7 +268,7 @@ touch /etc/nginx/conf.d/default.conf
 touch /etc/nginx/conf.d/$servername.conf
 cat <<EOF >/etc/nginx/conf.d/$servername.conf
 server {
-server_name $servername;
+server_name $servername www.$servername;
 listen 80;
 listen [::]:80;
 location ^~ /.well-known/acme-challenge {
@@ -280,7 +280,7 @@ return 301 https://\$host\$request_uri;
 }
 }
 server {
-server_name $servername;
+server_name $servername www.$servername;
 listen 443 ssl http2;
 listen [::]:443 ssl http2;
 root /var/www/$servername;
