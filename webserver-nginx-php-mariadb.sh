@@ -57,6 +57,7 @@ chmod +x add_website.sh
 wget -O  add_database.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_database.sh
 chmod +x add_database.sh
 
+uri=$uri
 read -p "sitename: " -e -i your.domain servername
 randomkey1=$(date +%s | cut -c 3-)
 read -p "sql databasename: " -e -i db$randomkey1 databasename
