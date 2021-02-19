@@ -452,7 +452,7 @@ sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
 
 
 
-certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d www.$servername -d $servername
+certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $servername -d www.$servername
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $servername
 
 if [ ! -d "/etc/letsencrypt/live" ]; then
