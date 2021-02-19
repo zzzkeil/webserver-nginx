@@ -170,7 +170,20 @@ phpinfo();
 ###apply permissions
 chown -R www-data:www-data /var/www
 ###install PHP - Backup default files
-apt install php8.0-fpm php8.0-curl php8.0-dom php8.0-exif php8.0-fileinfo php8.0-hash php8.0-json php8.0-mbstring php8.0-mysql php8.0-sodium php8.0-openssl php8.0-pcre php8.0-imagick php8.0-xml php8.0-zip php8.0-filter php8.0-gd php8.0-iconv php8.0-mycrypt php8.0-xml php8.0-simplexml php8.0-xmlreader php8.0-zlib php8.0-intl php8.0-bz2 php8.0-ldap php-apcu imagemagick -y
+
+
+
+
+
+## Baustelle
+apt install php8.0-fpm php8.0-curl php8.0-common php8.0-mbstring php8.0-mysql php8.0-imagick php8.0-xml php8.0-zip php8.0-gd php8.0-xml php8.0-intl php8.0-bz2 php8.0-ldap php-apcu imagemagick -y
+## Baustelle
+
+
+
+
+
+
 
 ###PHP Mods: cli/php.ini
 sed -i "s/output_buffering =.*/output_buffering = 'Off'/" /etc/php/8.0/cli/php.ini
