@@ -176,7 +176,7 @@ chown -R www-data:www-data /var/www
 
 
 ## Baustelle
-apt install php8.0-fpm php8.0-curl php8.0-common php8.0-mbstring php8.0-mysql php8.0-imagick php8.0-xml php8.0-zip php8.0-gd php8.0-xml php8.0-intl php8.0-bz2 php8.0-ldap php-apcu imagemagick -y
+apt install php8.0 php8.0-fpm php8.0-curl php8.0-common php8.0-mbstring php8.0-mysql php8.0-imagick php8.0-xml php8.0-zip php8.0-gd php8.0-xml php8.0-intl php8.0-bz2 php8.0-ldap php-apcu imagemagick -y
 ## Baustelle
 
 
