@@ -62,7 +62,6 @@ apt upgrade -y
 apt autoclean -y
 apt autoremove -y
 }
-}
 ### START ###
 apt install gnupg gnupg2 lsb-release wget curl -y
 ###prepare the server environment
