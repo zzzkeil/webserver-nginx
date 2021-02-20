@@ -57,7 +57,7 @@ chmod +x add_website.sh
 wget -O  add_database.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_database.sh
 chmod +x add_database.sh
 
-uri=$uri
+
 read -p "sitename: " -e -i your.domain servername
 randomkey1=$(date +%s | cut -c 3-)
 read -p "sql databasename: " -e -i db$randomkey1 databasename
@@ -333,14 +333,14 @@ listen [::]:443 ssl http2;
 root /var/www/$servername;
 index index.php index.html index.htm;
 location / {
-		try_files $uri $uri/ =404;
+		try_files \$uri \$uri/ =404;
 	}
+	
 location ~ \.php$ {
-    include /etc/nginx/fastcgi_params;
-    fastcgi_pass unix:/run/php/php8.0-fpm.sock;
-    fastcgi_index index.php;
-    fastcgi_param SCRIPT_FILENAME var/www/$servername/\$fastcgi_script_name;
-}
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.0-fpm.sock;
+    }	
+
 # letsencrypt for $servername
 #ssl_certificate /etc/letsencrypt/live/$servername/fullchain.pem;
 #ssl_certificate_key /etc/letsencrypt/live/$servername/privkey.pem;
