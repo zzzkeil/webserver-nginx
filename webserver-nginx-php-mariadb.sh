@@ -337,7 +337,7 @@ location / {
 	}
 	
 location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
+        include /etc/nginx/fastcgi_params;
         fastcgi_pass unix:/run/php/php8.0-fpm.sock;
     }	
 
