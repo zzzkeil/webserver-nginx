@@ -2,7 +2,7 @@
 clear
 echo " ##############################################################################"
 echo " ##############################################################################"
-echo " 2021.02.19 16:55  "
+echo " 2021.02.20 21:55  "
 echo " this is a test, do not run this script now ITS NOT READY !  "
 echo " check script status here : "
 echo " https://github.com/zzzkeil/webserver-nginx "
