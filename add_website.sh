@@ -140,41 +140,6 @@ sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
 fi
 systemctl restart nginx.service
 
-
-
-##############Testing####################################
-###add sftp user for this website
-echo "add sftp user for this website"
-echo
-echo
-randomkey3=$(date +%s | cut -c 4-)
-read -p "sftp username: " -e -i sftp$randomkey3 sftpuser
-randomkey4=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
-read -p "sql databaseuserpasswd: " -e -i $randomkey4 sftppasswd
-echo "
-$sitename
-sftpuser : $sftpuser
-sftppasswd : $sftppasswd
-#
-" >> /root/sftp_list.txt
-
-useradd -M -s /usr/sbin/nologin -d /home/$sitename/html -g www-data -p $(echo $sftppasswd | openssl passwd -1 -stdin) $sftpuser
-#chown -R $sftpuser:www-data /home/$sitename/html
-#chmod 0775 /home/$sitename/html
-
-echo "
-Match User $sftpuser
-ForceCommand internal-sftp
-PasswordAuthentication yes
-ChrootDirectory /home/$sitename/
-PermitTunnel no
-AllowAgentForwarding no
-AllowTcpForwarding no
-X11Forwarding no
-" >> /etc/ssh/sshd_config
-
-systemctl restart sshd
-
 ### CleanUp
 cat /dev/null > ~/.bash_history && history -c && history -w
 exit 0
