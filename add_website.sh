@@ -159,8 +159,8 @@ sftppasswd : $sftppasswd
 " >> /root/sftp_list.txt
 
 useradd -M -s /usr/sbin/nologin -d /home/$sitename/html -g www-data -p $(echo $sftppasswd | openssl passwd -1 -stdin) $sftpuser
-chown -R $sftpuser:www-data /home/$sitename/html
-chmod 0775 /home/$sitename/html
+#chown -R $sftpuser:www-data /home/$sitename/html
+#chmod 0775 /home/$sitename/html
 
 echo "
 Match User $sftpuser
