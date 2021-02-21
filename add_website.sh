@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo ""
+echo "1"
 echo ""
 echo "To EXIT this script press  [ENTER]"
 echo 
@@ -162,7 +162,6 @@ useradd -M -s /usr/sbin/nologin -d /home/$sitename/html -g www-data -p $(echo $s
 chown -R $sftpuser:www-data /home/$sitename/html
 chmod 0755 /home/$sitename/html
 
-
 echo "
 Match User $sftpuser
 ForceCommand internal-sftp
@@ -172,8 +171,8 @@ PermitTunnel no
 AllowAgentForwarding no
 AllowTcpForwarding no
 X11Forwarding no
-"
->> /etc/ssh/sshd_config
+" >> /etc/ssh/sshd_config
+
 systemctl restart sshd
 
 ### CleanUp
