@@ -37,21 +37,6 @@ databaseuserpasswd : $databaseuserpasswd
 " >> /root/user_and_mysql_database_list.txt
 
 
-###create sftp user
-
-useradd -m -p $userpass $siteuser -s /sbin/nologin -M
-usermod -aG www-data $siteuser
-chown $siteuser:www-data -R /home/$sitename/html/*
-
-echo "
-Match User $siteuser
-   ChrootDirectory /home/$sitename/html
-   ForceCommand internal-sftp
-   AllowTcpForwarding no
-   X11Forwarding no
-   " >> /etc/ssh/sshd_config
-
-
 ###
 function copy4SSL() {
 cp /etc/nginx/conf.d/$sitename.conf /etc/nginx/conf.d/$sitename.conf.orig
@@ -160,6 +145,21 @@ sed -i "s/server_name.*;/server_name $sitename;/" /etc/nginx/conf.d/$sitename.co
 sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
 fi
 systemctl restart nginx.service
+
+###create sftp user
+
+useradd -m -p $userpass $siteuser -s /sbin/nologin -M
+usermod -aG www-data $siteuser
+chown $siteuser:www-data -R /home/$sitename/html/*
+
+echo "
+Match User $siteuser
+   ChrootDirectory /home/$sitename/html
+   ForceCommand internal-sftp
+   AllowTcpForwarding no
+   X11Forwarding no
+   " >> /etc/ssh/sshd_config
+
 
 ### CleanUp
 cat /dev/null > ~/.bash_history && history -c && history -w
