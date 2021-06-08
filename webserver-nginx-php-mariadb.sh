@@ -52,8 +52,11 @@ if [[ -e /etc/debian_version ]]; then
 fi
 
 
+read -p "Choose your sftp Port: " -e -i 2222 sftpport
+
 ufw allow 80/tcp
 ufw allow 443/tcp
+ufw allow $sftpport/tcp
 
 ###global function to update and cleanup the environment
 function update_and_clean() {
@@ -358,6 +361,12 @@ sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
 ###restart NGINX
 /usr/sbin/service nginx restart
 #openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+
+### sftp port
+echo "
+Match LocalPort $sftpport
+    ForceCommand internal-sftp
+" >> /etc/ssh/sshd_config
 
 
 wget -O  add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_website.sh
