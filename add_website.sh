@@ -18,6 +18,9 @@ if [[ "$EUID" -ne 0 ]]; then
 fi
 
 read -p "sitename: " -e -i example.domain sitename
+read -p "siteuser: " -e -i user-$sitename siteuser
+randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
+read -p "userpass: " -e -i $randomkeyuser userpass
 randomkey1=$(date +%s | cut -c 3-)
 read -p "sql databasename: " -e -i db$randomkey1 databasename
 read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
@@ -25,11 +28,28 @@ randomkey2=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 12  ; echo)
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
 echo "
 $sitename
+Adminname : $siteuser
+Adminpassword : $userpass
 databasename : $databasename
 databaseuser : $databaseuser
 databaseuserpasswd : $databaseuserpasswd
 #
-" >> /root/mysql_database_list.txt
+" >> /root/user_and_mysql_database_list.txt
+
+
+###create sftp user
+
+useradd -m -p $userpass $siteuser -s /sbin/nologin -M
+usermod -aG www-data $siteuser
+
+echo "
+Match User $siteuser
+   ChrootDirectory /home/$sitename/html
+   ForceCommand internal-sftp
+   AllowTcpForwarding no
+   X11Forwarding no
+   " >> /etc/ssh/sshd_config
+
 
 ###
 function copy4SSL() {
