@@ -41,6 +41,7 @@ databaseuserpasswd : $databaseuserpasswd
 
 useradd -m -p $userpass $siteuser -s /sbin/nologin -M
 usermod -aG www-data $siteuser
+chown $siteuser:www-data -R /home/$sitename/html/*
 
 echo "
 Match User $siteuser
