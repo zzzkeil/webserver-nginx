@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo "1"
+echo "2"
 echo ""
 echo "To EXIT this script press  [ENTER]"
 echo 
@@ -50,7 +50,7 @@ useradd -M $siteuser -s /sbin/nologin
 echo "$siteuser:$userpass" | chpasswd
 usermod -aG www-data $siteuser
 ###apply permissions
-chown $siteuser:www-data -R /home/$sitename/html/*
+chown $siteuser:www-data -R /home/$sitename/html
 
 echo "
 Match User $siteuser
@@ -108,7 +108,6 @@ proxy_set_header Host \$host;
 
 ### letsencrypt 
 certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename -d www.$sitename
-#certbot certonly --manual --preferred-challenges dns --server https://acme-v02.api.letsencrypt.org/directory --manual-public-ip-logging-ok -d '*.$sitename' -d $sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
 
 if [ ! -d "/etc/letsencrypt/live" ]; then
