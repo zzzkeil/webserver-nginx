@@ -148,7 +148,8 @@ systemctl restart nginx.service
 
 ###create sftp user
 
-useradd -m -p $userpass $siteuser -s /sbin/nologin -M
+useradd -m $siteuser -s /sbin/nologin
+echo "$siteuser:$userpass" | chpasswd
 usermod -aG www-data $siteuser
 chown $siteuser:www-data -R /home/$sitename/html/*
 
