@@ -54,7 +54,7 @@ chown $siteuser:www-data -R /home/$sitename/html
 
 echo "
 Match User $siteuser
-   ChrootDirectory /home/$sitename/html
+   ChrootDirectory /home/$sitename/
    ForceCommand internal-sftp
    AllowTcpForwarding no
    X11Forwarding no
