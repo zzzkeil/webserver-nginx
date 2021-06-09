@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo "2"
+echo "3"
 echo ""
 echo "To EXIT this script press  [ENTER]"
 echo 
@@ -36,30 +36,33 @@ databaseuserpasswd : $databaseuserpasswd
 #
 " >> /root/user_and_mysql_database_list.txt
 
+
+###create sftp user
+useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
+echo "$siteuser:$userpass" | chpasswd
+
+echo "
+Match User $siteuser
+   ChrootDirectory %h
+   ForceCommand internal-sftp
+   AllowTcpForwarding no
+   X11Forwarding no
+   " >> /etc/ssh/sshd_config
+
+chown root: /home/$sitename
+chmod 755 /home/$sitename
+   
 ###create folders
-mkdir -p /home/$sitename/html
+mkdir /home/$sitename/html
 ###create temp html and php file
 echo "<html><body><center>test HTML file</center></body></html>" >> /home/$sitename/html/index.html
 echo "<?php
 phpinfo();
 ?>" >> /home/$sitename/html/info.php
 
-###create sftp user
 
-useradd -M $siteuser -s /sbin/nologin
-echo "$siteuser:$userpass" | chpasswd
-usermod -aG www-data $siteuser
-###apply permissions
-chown $siteuser:www-data -R /home/$sitename/html
-
-echo "
-Match User $siteuser
-   ChrootDirectory /home/$sitename/
-   ForceCommand internal-sftp
-   AllowTcpForwarding no
-   X11Forwarding no
-   " >> /etc/ssh/sshd_config
-
+chmod 755 /home/username/html
+chown $siteuser:www-data /home/username/html
 
 ###
 function copy4SSL() {
