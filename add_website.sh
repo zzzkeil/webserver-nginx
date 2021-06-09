@@ -61,8 +61,8 @@ phpinfo();
 ?>" >> /home/$sitename/html/info.php
 
 
-chmod 755 /home/username/html
-chown $siteuser:www-data /home/username/html
+chmod 755 /home/$sitename/html
+chown $siteuser:www-data /home/$sitename/html
 
 ###
 function copy4SSL() {
