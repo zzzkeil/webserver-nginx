@@ -52,11 +52,11 @@ if [[ -e /etc/debian_version ]]; then
 fi
 
 
-read -p "Choose your sftp Port: " -e -i 2222 sftpport
+
 
 ufw allow 80/tcp
 ufw allow 443/tcp
-ufw allow $sftpport/tcp
+
 
 ###global function to update and cleanup the environment
 function update_and_clean() {
