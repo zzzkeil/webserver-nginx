@@ -3,7 +3,7 @@ clear
 echo " ##############################################################################"
 echo " ##############################################################################"
 echo " 2021.06.09 12:43  "
-echo " this is a test, do not run this script now ITS NOT READY !  "
+echo " this is a test, to create a small nginx webserver with php8 and MariaDB "
 echo " check script status here : "
 echo " https://github.com/zzzkeil/webserver-nginx "
 echo " # Inspired by a script from  c-rieger.de  for nextcloud install #"
