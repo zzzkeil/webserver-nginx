@@ -36,6 +36,30 @@ databaseuserpasswd : $databaseuserpasswd
 #
 " >> /root/user_and_mysql_database_list.txt
 
+###create folders
+mkdir -p /home/$sitename/html
+###create temp html and php file
+echo "<html><body><center>test HTML file</center></body></html>" >> /home/$sitename/html/index.html
+echo "<?php
+phpinfo();
+?>" >> /home/$sitename/html/info.php
+
+###create sftp user
+
+useradd -M $siteuser -s /sbin/nologin
+echo "$siteuser:$userpass" | chpasswd
+usermod -aG www-data $siteuser
+###apply permissions
+chown $siteuser:www-data -R /home/$sitename/html/*
+
+echo "
+Match User $siteuser
+   ChrootDirectory /home/$sitename/html
+   ForceCommand internal-sftp
+   AllowTcpForwarding no
+   X11Forwarding no
+   " >> /etc/ssh/sshd_config
+
 
 ###
 function copy4SSL() {
@@ -55,15 +79,7 @@ echo "!!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!!"
 echo ""
 }
 
-###create folders
-mkdir -p /home/$sitename/html
-###create temp html and php file
-echo "<html><body><center>test HTML file</center></body></html>" >> /home/$sitename/html/index.html
-echo "<?php
-phpinfo();
-?>" >> /home/$sitename/html/info.php
-###apply permissions
-chown -R www-data:www-data /home/$sitename/html
+
 ### add database
 mysql -uroot <<EOF
 CREATE DATABASE $databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
@@ -91,7 +107,8 @@ proxy_set_header Host \$host;
 
 
 ### letsencrypt 
-certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename -d www.$sitename 
+certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename -d www.$sitename
+#certbot certonly --manual --preferred-challenges dns --server https://acme-v02.api.letsencrypt.org/directory --manual-public-ip-logging-ok -d '*.$sitename' -d $sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
 
 if [ ! -d "/etc/letsencrypt/live" ]; then
@@ -145,22 +162,7 @@ sed -i "s/server_name.*;/server_name $sitename;/" /etc/nginx/conf.d/$sitename.co
 sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
 fi
 systemctl restart nginx.service
-
-###create sftp user
-
-useradd -m $siteuser -s /sbin/nologin
-echo "$siteuser:$userpass" | chpasswd
-usermod -aG www-data $siteuser
-chown $siteuser:www-data -R /home/$sitename/html/*
-
-echo "
-Match User $siteuser
-   ChrootDirectory /home/$sitename/html
-   ForceCommand internal-sftp
-   AllowTcpForwarding no
-   X11Forwarding no
-   " >> /etc/ssh/sshd_config
-
+systemctl restart sshd.service
 
 ### CleanUp
 cat /dev/null > ~/.bash_history && history -c && history -w
