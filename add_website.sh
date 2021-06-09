@@ -54,14 +54,7 @@ chmod 755 /home/$sitename
    
 ###create folders
 mkdir /home/$sitename/html
-###create temp html and php file
-echo "<html><body><center>test HTML file</center></body></html>" >> /home/$sitename/html/index.html
-echo "<?php
-phpinfo();
-?>" >> /home/$sitename/html/info.php
-
-
-chmod 755 /home/$sitename/html
+chmod 775 /home/$sitename/html
 chown $siteuser:www-data /home/$sitename/html
 
 ###
