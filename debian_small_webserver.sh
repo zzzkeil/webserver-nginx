@@ -94,23 +94,35 @@ apt autoremove -y
 }
 
 ### START ###
-apt install gnupg gnupg2 lsb-release wget curl -y
+apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring
+
+curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
+    | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
+
+gpg --dry-run --quiet --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
+http://nginx.org/packages/debian `lsb_release -cs` nginx" \
+    | sudo tee /etc/apt/sources.list.d/nginx.list
+
+echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
+    | sudo tee /etc/apt/preferences.d/99nginx
 
 
-###
-#curl -fsSL https://nginx.org/keys/nginx_signing.key | sudo apt-key add -
-#apt-key adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 4F4EA0AAE5267A6C
-#apt-key adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 0xF1656F24C74CD1D8
 
 
+#update_and_clean
+#apt install software-properties-common zip unzip screen git libfile-fcntllock-perl locate ghostscript tree -y
+#apt install screen git libfile-fcntllock-perl locate -y
 
-update_and_clean
-apt install software-properties-common zip unzip screen git wget ffmpeg libfile-fcntllock-perl locate ghostscript tree htop -y
+
 ###instal NGINX using TLSv1.3, OpenSSL 1.1.1
 update_and_clean
-apt install nginx certbot -y
+apt install nginx certbot python3-certbot -y
+
 ###enable NGINX autostart
 systemctl enable nginx.service
+
 ### prepare the NGINX
 mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak && touch /etc/nginx/nginx.conf
 echo "user www-data;
@@ -148,21 +160,24 @@ resolver_timeout 5s;
 include /etc/nginx/conf.d/*.conf;
 }
 " > /etc/nginx/nginx.conf
+
 ###create folders
 mkdir -p /var/www/letsencrypt /etc/letsencrypt/rsa-certs /etc/letsencrypt/ecc-certs
+
 ###apply permissions
 chown -R www-data:www-data /var/www
 
 
 ###restart NGINX
-
 /usr/sbin/service nginx restart
 
 ###install self signed certificates
 apt install ssl-cert -y
+
 ###prepare NGINX for Site and SSL
 [ -f /etc/nginx/conf.d/default.conf ] && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 touch /etc/nginx/conf.d/default.conf
+
 ###create a Let's Encrypt vhost file
 touch /etc/nginx/conf.d/letsencrypt.conf
 echo "server
@@ -177,6 +192,8 @@ root /var/www/letsencrypt;
 }
 }
 " > /etc/nginx/conf.d/letsencrypt.conf
+
+
 ###create a ssl configuration file
 echo "ssl_dhparam /etc/ssl/certs/dhparam.pem;
 ssl_session_timeout 1d;
@@ -195,26 +212,11 @@ ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
 " > /etc/nginx/ssl.conf
 
 ###add a default dhparam.pem file // https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096
-### a preset pem file for  quick setup -- make a new one after setup
-echo "
------BEGIN DH PARAMETERS-----
-MIICCAKCAgEA4dVOH17fdmSkEXS1rZV3tGbFpGbiOE7uhZS39HRPGFb9fQWx/8me
-bttfJLaJGED06fO46i8w0o2XZsFW+u6MY7c3ZpzuXFh3g1o3FCebgWLlEnEP8VEo
-IVllMFi6VsRQ8d4yMMPNFMOBCwercj09cwbx+LVHE2LerXjz8GTpj/gOvDFZeHV7
-BeKP/Rljfyhx7v/vxgU6jCHb5lvFcghBhcmBsuoHFxg+1oeLTK8kZxaDSjuwd0bt
-rCk44ChFiN/ivK9GWeHbTMWGh1BV6cKbOvEam5H1Z7XJsD5jvI9GinXR2r7E5EPs
-kMn1Nd89JZTjkPa9DabhWIZf/WNIMfJ4EfwuNzH5ZmvMBGQZ/DytOkXl5ZR2OxX6
-aKBIJmw2bjzZ9nBAgp+VPPCC3MPLmumV4KxIk2UrJDxutYt0ZXIdWkll+ofasn7F
-YAn+i40sfRvYJO/qcqM2I0YD9mqrROzq8sIBUXd3TbsMk+3+rQEdM5FzxHuQYE2I
-S5IlLRFLNCKlEVW3N7hK7byQWnioVzY7K7WYKAHTgX7dNZEMGLeyiL1YGp6ieZD6
-AykQF0llZYIM012q9XvxDXu5Elba8m5XRHgNTIDvmJXp2MoQJoBuE4dxO2wMs5ys
-XDRdH8lxYqiqk9oE+QL+rITf3pCAwq2qGxZARtWNNE+42TJgPmUGc4MCAQI=
------END DH PARAMETERS-----
-" > /etc/ssl/certs/dhparam.pem
+
+openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
 
 
 ###create a proxy configuration file
-
 echo "proxy_set_header Host \$host;
 proxy_set_header X-Real-IP \$remote_addr;
 proxy_set_header X-Forwarded-Host \$host;
@@ -227,6 +229,8 @@ proxy_send_timeout 3600;
 proxy_read_timeout 3600;
 proxy_redirect off;
 "  > /etc/nginx/proxy.conf
+
+
 ###create a header configuration file
 echo 'add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
 add_header X-Robots-Tag none; add_header X-Download-Options noopen;
@@ -236,6 +240,8 @@ add_header X-XSS-Protection "1; mode=block" always;
 add_header Referrer-Policy "no-referrer" always;
 add_header X-Frame-Options "SAMEORIGIN";
 '  > /etc/nginx/header.conf
+
+
 ###create a nginx optimization file
 echo 'fastcgi_hide_header X-Powered-By;
 fastcgi_read_timeout 3600;
@@ -257,21 +263,6 @@ gzip_disable "MSIE [1-6]\.";
 ' > /etc/nginx/optimization.conf
 
 
-###create a nginx php optimization file
-#echo "fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-#fastcgi_param PATH_INFO \$path_info;
-#fastcgi_param modHeadersAvailable true;
-#fastcgi_param front_controller_active true;
-#fastcgi_pass php-handler;
-#fastcgi_param HTTPS on;
-#fastcgi_intercept_errors on;
-#fastcgi_request_buffering off;
-#fastcgi_cache_valid 404 1m;
-#fastcgi_cache_valid any 1h;
-#fastcgi_cache_methods GET HEAD;
-#" > /etc/nginx/php_optimization.conf
-
-
 
 ###enable all nginx configuration files
 sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
@@ -279,7 +270,7 @@ sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
 
 ###restart NGINX
 /usr/sbin/service nginx restart
-#openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+
 
 cd
 wget -O  add_simple_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_simple_website.sh
