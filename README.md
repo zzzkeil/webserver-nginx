@@ -1,3 +1,19 @@
+#### test debian 11 small website, just html  and letsencrypt
+
+```
+
+wget -O  debian_small_webserver.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/debian_small_webserver.sh
+chmod +x debian_small_webserver.sh
+./debian_small_webserver.sh
+
+```
+
+
+
+
+
+old ......
+
 ###### For Ubuntu 18.04 / 20.04:
 ```
 
