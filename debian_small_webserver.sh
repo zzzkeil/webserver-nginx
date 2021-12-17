@@ -94,7 +94,7 @@ apt autoremove -y
 }
 
 ### START ###
-apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring
+apt install gnupg2 -y 
 
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
     | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
