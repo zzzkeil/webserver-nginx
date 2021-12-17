@@ -273,14 +273,14 @@ sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
 
 
 cd
-wget -O  add_simple_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_simple_website.sh
-chmod +x add_simple_website.sh
+wget -O  add_small_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_small_website.sh
+chmod +x add_small_website.sh
 
 
 clear
 echo " ##############################################################################"
 echo " ##############################################################################"
-echo " To add your first website run ./add_simple_website.sh "
+echo " To add your first website run ./add_small_website.sh "
 echo " ##############################################################################"
 echo " ##############################################################################"
 
