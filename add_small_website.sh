@@ -48,7 +48,28 @@ chmod 755 /home/$sitename
 ###create folders
 mkdir /home/$sitename/html
 chmod 775 /home/$sitename/html
+
+echo "
+<!doctype html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>$sitename</title>
+</head>
+
+<body>
+
+<h1>Wellcome at $sitename</h1>
+<p>This is a placeholder</p> 
+
+</body>
+</html>
+" > /home/$sitename/html/index.html
+
 chown $siteuser:www-data /home/$sitename/html
+
+
 
 ###
 function copy4SSL() {
