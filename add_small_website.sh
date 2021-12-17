@@ -87,7 +87,7 @@ proxy_set_header Host \$host;
 
 
 ### letsencrypt 
-certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename -d www.$sitename
+certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --register-unsafely-without-email --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
 
 if [ ! -d "/etc/letsencrypt/live" ]; then
