@@ -93,7 +93,7 @@ apt autoremove -y
 ### START ###
 # Debian 11
 if [[ "$VERSION_ID" = '11' ]]; then
-apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring
+apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring -y
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
     | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
 echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
@@ -105,8 +105,13 @@ echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 
 fi  
 
 # Ubuntu 20.04
+## ubunut need snapd for certbot´s "latest version"
+### without snapd i have to struggle with : https://github.com/certbot/website/pull/698 / https://certbot.eff.org/instructions?ws=nginx&os=pip
 if [[ "$VERSION_ID" = '20.04' ]]; then
-apt install curl gnupg2 ca-certificates lsb-release ubuntu-keyring
+apt install snapd curl gnupg2 ca-certificates lsb-release ubuntu-keyring -y
+snap install core; snap refresh core
+snap install --classic certbot
+ln -s /snap/bin/certbot /usr/bin/certbot
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
     | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
 echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
