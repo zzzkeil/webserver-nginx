@@ -185,14 +185,16 @@ rm -r /home/$sitename
 rm /etc/nginx/conf.d/$sitename.conf
 /usr/sbin/service nginx restart
 clear
-echo -e " ${RED}${ENDCOLOR} "
-echo -e " ${YELLOW} !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! ${ENDCOLOR}"
-echo -e " ${REDB}*** ERROR while requesting your certificate(s) ***${ENDCOLOR}"
+echo -e " ${REDB}##############################################################################${ENDCOLOR}"
+echo -e " ${REDB}#${ENDCOLOR}${RED}             *** ERROR while requesting your certificate(s) ***             ${ENDCOLOR}${REDB}#${ENDCOLOR}"
+echo -e " ${REDB}##############################################################################${ENDCOLOR}"
 echo -e ""
-echo -e "Verify that both ports (80 + 443) are forwarded to this server!"
-echo -e "And verify, your dyndns points to your IP either!"
-echo -e "Then retry..."
-echo -e " ${YELLOW} !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! ${ENDCOLOR}"
+echo -e " ${YELLOW}##############################################################################${ENDCOLOR}"
+echo -e " ${YELLOW}#${ENDCOLOR} Verify that both ports (80 + 443) are forwarded to this server!"                  ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
+echo -e " ${YELLOW}#${ENDCOLOR} Verify, your dyndns points to your IP either!"                                    ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
+echo -e " ${YELLOW}#${ENDCOLOR} See the logfile /var/log/letsencrypt/letsencrypt.log "                            ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
+echo -e " ${YELLOW}#${ENDCOLOR} Then retry..."                                                                    ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
+echo -e " ${YELLOW}##############################################################################${ENDCOLOR}"
 echo ""
 exit
 }
