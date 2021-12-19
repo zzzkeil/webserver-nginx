@@ -363,9 +363,9 @@ sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
 #openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
 
 cd
-wget -O  add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_website.sh
+wget -O  add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/old/add_website.sh
 chmod +x add_website.sh
-wget -O  add_database.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_database.sh
+wget -O  add_database.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/old/add_database.sh
 chmod +x add_database.sh
 
 clear
