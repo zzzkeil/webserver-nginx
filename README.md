@@ -1,15 +1,27 @@
 ## A small nginx webserver with lets encrypt, tlsv1.3 only
-### base install, just for multiple html sites, with index.html placeholder >>> .... (no php, no db installed)
+### base install, just for multiple html sites, with index.html placeholder 
+.... (no php, no db installed)
 
 #### (beta) for Debian 11 and Ubuntu 20.04
 
 ```
-
 wget -O  debian_small_webserver.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/debian_small_webserver.sh
 chmod +x debian_small_webserver.sh
 ./debian_small_webserver.sh
 
 ```
+
+#### (work in progress, sometime)
+
+```
+addon to install php 8 and mariadb 10
+```
+
+-
+
+-
+
+-
 
 -
 
