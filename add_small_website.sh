@@ -181,9 +181,7 @@ userdel $siteuser
 rm /etc/ssh/sshd_config 
 mv /root/script_backupfiles/sshd_config.bak01 /etc/ssh/sshd_config 
 systemctl restart sshd.service
-rm /home/$sitename/html/index.html
-rm /home/$sitename/html/index.css
-rm /home/$sitename
+rm -r /home/$sitename
 rm /etc/nginx/conf.d/$sitename.conf
 /usr/sbin/service nginx restart
 clear
