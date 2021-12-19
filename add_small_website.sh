@@ -40,25 +40,17 @@ fi
 
 
 
-
+### site data
 read -p "sitename: " -e -i example.domain sitename
 read -p "siteuser: " -e -i user-$sitename siteuser
 randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
 read -p "userpass: " -e -i $randomkeyuser userpass
 
 
-echo "
-$sitename
-Adminname : $siteuser
-Adminpassword : $userpass
-#
-" >> /root/website_user_list.txt
-
-
 ###create sftp user
 useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
 echo "$siteuser:$userpass" | chpasswd
-
+cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
 echo "
 Match User $siteuser
    ChrootDirectory %h
@@ -70,12 +62,30 @@ Match User $siteuser
 chown root: /home/$sitename
 chmod 755 /home/$sitename
    
-###create folders
+###create folders and files
 mkdir /home/$sitename/html
 chmod 775 /home/$sitename/html
 
 echo "
-
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="index.css">
+  <title>$sitename</title>
+</head>
+<body>
+<div class="bg"></div>
+<div class="bg bg2"></div>
+<div class="bg bg3"></div>
+<div class="content">
+<h1>Wellcome to $sitename</h1>
+<p>This is a placeholder<p>
+<p>I'll be back, soon .....<p>
+</div>
+</body>
+</html>
 " > /home/$sitename/html/index.html
 
 echo "
@@ -134,29 +144,7 @@ h1 {
   }
 }
 " > /home/$sitename/html/index.css 
-
-
 chown -R $siteuser:www-data /home/$sitename/html
-
-
-
-###
-function copy4SSL() {
-cp /etc/nginx/conf.d/$sitename.conf /etc/nginx/conf.d/$sitename.conf.orig
-cp /etc/nginx/ssl.conf /etc/nginx/ssl.conf.orig
-}
-###
-function errorSSL() {
-clear
-echo "!!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!!"
-echo "*** ERROR while requesting your certificate(s) ***"
-echo ""
-echo "Verify that both ports (80 + 443) are forwarded to this server!"
-echo "And verify, your dyndns points to your IP either!"
-echo "Then retry..."
-echo "!!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!!"
-echo ""
-}
 
 
 ###prepare NGINX for Site and SSL
@@ -181,7 +169,37 @@ certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --no-eff-email -
 #certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --register-unsafely-without-email --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
 
-if [ ! -d "/etc/letsencrypt/live" ]; then
+###
+function copy4SSL() {
+cp /etc/nginx/conf.d/$sitename.conf /etc/nginx/conf.d/$sitename.conf.orig
+cp /etc/nginx/ssl.conf /etc/nginx/ssl.conf.orig
+rm root/script_backupfiles/sshd_config.bak01
+}
+###
+function errorSSL() {
+userdel $siteuser
+rm /etc/ssh/sshd_config 
+mv /root/script_backupfiles/sshd_config.bak01 /etc/ssh/sshd_config 
+systemctl restart sshd.service
+rm /home/$sitename/html/index.html
+rm /home/$sitename/html/index.css
+rm /home/$sitename
+rm /etc/nginx/conf.d/$sitename.conf
+/usr/sbin/service nginx restart
+clear
+echo -e " ${RED}${ENDCOLOR} "
+echo -e " ${YELLOW} !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! ${ENDCOLOR}"
+echo -e " ${REDB}*** ERROR while requesting your certificate(s) ***${ENDCOLOR}"
+echo -e ""
+echo -e "Verify that both ports (80 + 443) are forwarded to this server!"
+echo -e "And verify, your dyndns points to your IP either!"
+echo -e "Then retry..."
+echo -e " ${YELLOW} !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! !!! ${ENDCOLOR}"
+echo ""
+exit
+}
+
+if [ ! -d "/etc/letsencrypt/live/$sitename" ]; then
 errorSSL
 else
 copy4SSL
@@ -221,13 +239,21 @@ error_log /var/log/nginx/$sitename.error.log warn;
 #
 }
 EOF
-
-
 sed -i "s/server_name.*;/server_name $sitename;/" /etc/nginx/conf.d/$sitename.conf
 sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
 fi
+
+
 systemctl restart nginx.service
 systemctl restart sshd.service
+
+
+echo "
+$sitename
+Adminname : $siteuser
+Adminpassword : $userpass
+#
+" >> /root/website_user_list.txt
 
 
 clear
