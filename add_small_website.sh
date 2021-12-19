@@ -45,7 +45,6 @@ read -p "sitename: " -e -i example.domain sitename
 read -p "siteuser: " -e -i user-$sitename siteuser
 randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
 read -p "userpass: " -e -i $randomkeyuser userpass
-read -p "letsencypt registration and recovery mail: " -e -i yourname@$sitename sitemail
 
 
 echo "
@@ -178,7 +177,7 @@ proxy_set_header Host \$host;
 
 
 ### letsencrypt 
-certbot certonly -a webroot --webroot-path=/var/www/letsencrypt -m '$sitemail' --no-eff-email --key-type ecdsa --elliptic-curve secp384r1 --rsa-key-size 4096 -d $sitename -d www.$sitename
+certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --no-eff-email --key-type ecdsa --elliptic-curve secp384r1 --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --register-unsafely-without-email --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
 
