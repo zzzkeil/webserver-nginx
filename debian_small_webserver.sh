@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # visual text settings
 RED="\e[31m"
 GREEN="\e[32m"
@@ -15,21 +14,24 @@ ENDCOLOR="\e[0m"
 
 clear
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR} ${REDB}do not run this one --- its not finished :)  work in progress              ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}test to create a small nginx webserver with letsencrypt                    ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Small script to install nginx webserver on Debian 11 and Ubuntu 20.04      ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Settings : TLSv1.3 only | lets encrypt ecdsa | some other mods             ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}More information: https://github.com/zzzkeil/webserver-nginx                ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR} ${YELLOW}Inspired by a script from  c-rieger.de  for nextcloud install               ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}My base_setup.sh script is needed to setup this script correctly!!         ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}If not installed, a automatic download starts, then follow the instructions${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}More information: https://github.com/zzzkeil/webserver-nginx               ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR}                 Version 2021.12.17 - changelog on github                   ${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR}                 Version 2021.12.19 - changelog on github                   ${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 echo ""
 echo ""
-echo "To EXIT this script press  [ENTER]"
-echo 
-read -p "To RUN this script press  [Y]" -n 1 -r
-echo
-echo
+echo ""
+echo  -e "                    ${RED}To EXIT this script press any key${ENDCOLOR}"
+echo ""
+echo  -e "                            ${GREEN}Press [Y] to begin${ENDCOLOR}"
+read -p "" -n 1 -r
+echo ""
+echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
     exit 1
@@ -37,11 +39,10 @@ fi
 #
 ### root check
 if [[ "$EUID" -ne 0 ]]; then
-	echo "Sorry, you need to run this as root"
+	echo -e "${RED}Sorry, you need to run this as root${ENDCOLOR}"
 	exit 1
 fi
 
-#
 ### base_setup check
 if [[ -e /root/base_setup.README ]]; then
      echo -e "base_setup script installed = ${GREEN}ok${ENDCOLOR}"
@@ -62,27 +63,22 @@ if [[ -e /root/base_setup.README ]]; then
 fi
 
 
-### check if Debian 11
+### check if Debian or Ubuntu
 . /etc/os-release
-if [[ "$ID" = 'debian' ]]; then
+if [[ "$ID" = 'debian' ]] || [[ "$ID" = 'ubuntu' ]]; then
    echo -e "OS ID check = ${GREEN}ok${ENDCOLOR}"
    else 
-   echo -e "${RED}This script is only for Debian${ENDCOLOR}"
+   echo -e "${RED}This script is only for Debian and Ubuntu ${ENDCOLOR}"
    exit 1
 fi
 
-if [[ "$VERSION_ID" = '11' ]]; then
+if [[ "$VERSION_ID" = '11' ]] || [[ "$VERSION_ID" = '20.04' ]]; then
    echo -e "OS Versions check = ${GREEN}ok${ENDCOLOR}"
    else
-   echo -e "${RED}Only Debian 11 supported ${ENDCOLOR}"
+   echo -e "${RED}Only Debian 11 and Ubuntu 20.04 supported ${ENDCOLOR}"
 
    exit 1
 fi
-
-
-
-ufw allow 80/tcp
-ufw allow 443/tcp
 
 
 ###global function to update and cleanup the environment
@@ -93,27 +89,33 @@ apt autoclean -y
 apt autoremove -y
 }
 
-### START ###
-apt install gnupg2 -y 
 
+### START ###
+# Debian 11
+if [[ "$VERSION_ID" = '11' ]]; then
+apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
     | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
-
-gpg --dry-run --quiet --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg
-
 echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
-http://nginx.org/packages/debian `lsb_release -cs` nginx" \
+http://nginx.org/packages/mainline/debian `lsb_release -cs` nginx" \
     | sudo tee /etc/apt/sources.list.d/nginx.list
+echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
+    | sudo tee /etc/apt/preferences.d/99nginx
+    
+fi  
 
+# Ubuntu 20.04
+if [[ "$VERSION_ID" = '20.04' ]]; then
+apt install curl gnupg2 ca-certificates lsb-release ubuntu-keyring
+curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
+    | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
+http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx" \
+    | sudo tee /etc/apt/sources.list.d/nginx.list
 echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
     | sudo tee /etc/apt/preferences.d/99nginx
 
-
-
-
-#update_and_clean
-#apt install software-properties-common zip unzip screen git libfile-fcntllock-perl locate ghostscript tree -y
-#apt install screen git libfile-fcntllock-perl locate -y
+fi
 
 
 ###instal NGINX using TLSv1.3, OpenSSL 1.1.1
@@ -213,8 +215,9 @@ ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
 
 ###add a default dhparam.pem file // https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096
 
+echo -e " ${YELLOW}Get some coffee or beer, restore your energy, this can take a while ${ENDCOLOR}"
 openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
-
+echo -e " ${GREEN}:) done ${ENDCOLOR}"
 
 ###create a proxy configuration file
 echo "proxy_set_header Host \$host;
@@ -276,13 +279,15 @@ cd
 wget -O  add_small_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_small_website.sh
 chmod +x add_small_website.sh
 
+### open ports
+ufw allow 80/tcp
+ufw allow 443/tcp
 
 clear
-echo " ##############################################################################"
-echo " ##############################################################################"
-echo " To add your first website run ./add_small_website.sh "
-echo " ##############################################################################"
-echo " ##############################################################################"
+
+echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}To add your first website run ./add_small_website.sh                       ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 
 ### CleanUp
 cat /dev/null > ~/.bash_history && history -c && history -w
