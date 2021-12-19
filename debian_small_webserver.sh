@@ -101,7 +101,9 @@ http://nginx.org/packages/mainline/debian `lsb_release -cs` nginx" \
     | sudo tee /etc/apt/sources.list.d/nginx.list
 echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
     | sudo tee /etc/apt/preferences.d/99nginx
-    
+ 
+update_and_clean
+apt install nginx certbot python3-certbot -y
 fi  
 
 # Ubuntu 20.04
@@ -119,13 +121,11 @@ http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx" \
     | sudo tee /etc/apt/sources.list.d/nginx.list
 echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
     | sudo tee /etc/apt/preferences.d/99nginx
-
+    
+update_and_clean
+apt install nginx -y
 fi
 
-
-###instal NGINX using TLSv1.3, OpenSSL 1.1.1
-update_and_clean
-apt install nginx certbot python3-certbot -y
 
 ###enable NGINX autostart
 systemctl enable nginx.service
