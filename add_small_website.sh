@@ -131,7 +131,7 @@ h1 {
 " > /home/$sitename/html/index.css 
 
 
-chown $siteuser:www-data /home/$sitename/html
+chown -R $siteuser:www-data /home/$sitename/html
 
 
 
