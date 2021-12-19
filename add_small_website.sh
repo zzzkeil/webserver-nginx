@@ -1,21 +1,45 @@
 #!/bin/bash
+
+# visual text settings
+RED="\e[31m"
+GREEN="\e[32m"
+GRAY="\e[37m"
+YELLOW="\e[93m"
+
+REDB="\e[41m"
+GREENB="\e[42m"
+GRAYB="\e[47m"
+ENDCOLOR="\e[0m"
+
+
 clear
-echo " test 5"
+echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Script to add a new website to your nginx webserver                        ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}1. You need to check your DNS settings for your domain                     ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}2. You need a email for letsencrypt setup                                  ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 echo ""
-echo "To EXIT this script press  [ENTER]"
-echo 
-read -p "To RUN this script press  [Y]" -n 1 -r
-echo
-echo
+echo ""
+echo ""
+echo  -e "                    ${RED}To EXIT this script press any key${ENDCOLOR}"
+echo ""
+echo  -e "                            ${GREEN}Press [Y] to begin${ENDCOLOR}"
+read -p "" -n 1 -r
+echo ""
+echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
     exit 1
 fi
-
+#
+### root check
 if [[ "$EUID" -ne 0 ]]; then
-	echo "Sorry, you need to run this as root"
+	echo -e "${RED}Sorry, you need to run this as root${ENDCOLOR}"
 	exit 1
 fi
+
+
+
 
 read -p "sitename: " -e -i example.domain sitename
 read -p "siteuser: " -e -i user-$sitename siteuser
@@ -52,25 +76,7 @@ mkdir /home/$sitename/html
 chmod 775 /home/$sitename/html
 
 echo "
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="index.css">
-  <title>$sitename</title>
-</head>
-<body>
-<div class="bg"></div>
-<div class="bg bg2"></div>
-<div class="bg bg3"></div>
-<div class="content">
-<h1>Wellcome to $sitename</h1>
-<p>This is a placeholder<p>
-<p>I'll be back, soon .....<p>
-</div>
-</body>
-</html>
+
 " > /home/$sitename/html/index.html
 
 echo "
@@ -223,6 +229,14 @@ sed -i s/\#\ssl/\ssl/g /etc/nginx/ssl.conf
 fi
 systemctl restart nginx.service
 systemctl restart sshd.service
+
+
+clear
+
+echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Done. Test your site now.                                                  ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
+
 
 ### CleanUp
 cat /dev/null > ~/.bash_history && history -c && history -w
