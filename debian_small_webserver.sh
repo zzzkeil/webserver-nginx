@@ -215,8 +215,12 @@ ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
 
 ###add a default dhparam.pem file // https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096
 
+clear
+echo ""
 echo -e " ${YELLOW}Get some coffee or beer, restore your energy, this can take a while ${ENDCOLOR}"
+echo ""
 openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+clear
 echo -e " ${GREEN}:) done ${ENDCOLOR}"
 
 ###create a proxy configuration file
