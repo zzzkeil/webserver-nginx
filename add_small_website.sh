@@ -172,8 +172,7 @@ proxy_set_header Host \$host;
 
 
 ### letsencrypt 
-certbot certonly -a webroot --webroot-path=/var/www/letsencrypt -m '$sitemail' --no-eff-email --key-type ecdsa --elliptic-curve secp521r1 --rsa-key-size 4096 -d $sitename -d www.$sitename
-#certbot certonly -a webroot --webroot-path=/var/www/letsencrypt -m '$sitemail' --no-eff-email --key-type ecdsa --elliptic-curve secp521r1 --rsa-key-size 4096 --preferred-challenges dns -d '*.$sitename' -d $sitename
+certbot certonly -a webroot --webroot-path=/var/www/letsencrypt -m '$sitemail' --no-eff-email --key-type ecdsa --elliptic-curve secp384r1 --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --register-unsafely-without-email --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
 
