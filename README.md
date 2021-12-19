@@ -2,7 +2,7 @@
 ### base install, just for multiple html sites, with index.html placeholder 
 .... (no php, no db installed)
 
-#### (beta) for Debian 11 and Ubuntu 20.04
+#### (beta) for Debian 11 ( in testing Ubuntu 20.04 )
 
 ```
 wget -O  debian_small_webserver.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/debian_small_webserver.sh
