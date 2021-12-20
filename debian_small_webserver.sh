@@ -206,10 +206,10 @@ echo "ssl_dhparam /etc/ssl/certs/dhparam.pem;
 ssl_session_timeout 60m;
 ssl_session_cache shared:SSL:30m;
 ssl_session_tickets off;
+# Mozilla modern configuration 2020 - the client chose the ciphers in TLSv1.3 only mode,  ok ....
 ssl_protocols TLSv1.3;
-ssl_ciphers 'TLS-CHACHA20-POLY1305-SHA256:TLS-AES-256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384'; #:ECDHE-RSA-AES256-SHA384';
-ssl_ecdh_curve X448:secp521r1:secp384r1;
-ssl_prefer_server_ciphers on;
+ssl_prefer_server_ciphers off;
+#ssl_ecdh_curve X448:secp521r1:secp384r1;
 ssl_stapling on;
 ssl_stapling_verify on;
 #
