@@ -119,7 +119,7 @@ update_and_clean
 apt install certbot python3-certbot-nginx mariadb-server php8.3 php8.3-fpm php8.3-cli php-mbstring php8.3-curl php8.3-igbinary php8.3-imagick php8.3-intl php8.3-mbstring php8.3-xml php8.3-zip php8.3-apcu php8.3-memcached php8.3-opcache php8.3-redis php8.3-mysql php8.3-gd php8.3-gmp php8.3-bcmath php8.3-bz2 php8.3-common -y
 ###nginx last
 update_and_clean
-apt install nginx -y
+apt install nginx-full -y
 fi
 
 
