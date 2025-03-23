@@ -209,7 +209,8 @@ systemctl restart sshd.service
 rm -r /home/$sitename
 rm /etc/nginx/conf.d/$sitename.conf
 /usr/sbin/service nginx restart
-clear
+
+
 echo -e " ${REDB}##############################################################################${ENDCOLOR}"
 echo -e " ${REDB}#${ENDCOLOR}${RED}             *** ERROR while requesting your certificate(s) ***             ${ENDCOLOR}${REDB}#${ENDCOLOR}"
 echo -e " ${REDB}##############################################################################${ENDCOLOR}"
@@ -291,8 +292,6 @@ Databaseuserpasswd : $randomkey2
 
 " >> /root/website_user_list.txt
 
-
-clear
 
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Done. Test your site now.                                                  ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
