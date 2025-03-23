@@ -314,6 +314,7 @@ echo "--------------------------------------------------------------------------
 mariadb-secure-installation
 
 systemctl restart mariadb.service
+systemctl restart php8.3-fpm
 
 
 
