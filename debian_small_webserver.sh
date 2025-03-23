@@ -14,14 +14,14 @@ ENDCOLOR="\e[0m"
 
 clear
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Small script to install nginx webserver on Debian 11 and Ubuntu 20.04      ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Small script to install nginx webserver on Debian 12 and Ubuntu 24.04      ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Settings : TLSv1.3 only | lets encrypt ecdsa | some other mods             ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}My base_setup.sh script is needed to setup this script correctly!!         ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}If not installed, a automatic download starts, then follow the instructions${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}More information: https://github.com/zzzkeil/webserver-nginx               ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR}                 Version 2021.12.19 - changelog on github                   ${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR}                 Version 2025.03.23 - changelog on github                   ${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 echo ""
 echo ""
@@ -72,10 +72,10 @@ if [[ "$ID" = 'debian' ]] || [[ "$ID" = 'ubuntu' ]]; then
    exit 1
 fi
 
-if [[ "$VERSION_ID" = '11' ]] || [[ "$VERSION_ID" = '20.04' ]]; then
+if [[ "$VERSION_ID" = '12' ]] || [[ "$VERSION_ID" = '24.04' ]]; then
    echo -e "OS Versions check = ${GREEN}ok${ENDCOLOR}"
    else
-   echo -e "${RED}Only Debian 11 and Ubuntu 20.04 supported ${ENDCOLOR}"
+   echo -e "${RED}Only Debian 12 and Ubuntu 24.04 supported ${ENDCOLOR}"
 
    exit 1
 fi
@@ -91,8 +91,8 @@ apt autoremove -y
 
 
 ### START ###
-# Debian 11
-if [[ "$VERSION_ID" = '11' ]]; then
+# Debian 12
+if [[ "$VERSION_ID" = '12' ]]; then
 apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring -y
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
     | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
@@ -106,10 +106,10 @@ update_and_clean
 apt install nginx certbot python3-certbot -y
 fi  
 
-# Ubuntu 20.04
-## ubunut need snapd for certbot´s "latest version"
-### without snapd i have to struggle with : https://github.com/certbot/website/pull/698 / https://certbot.eff.org/instructions?ws=nginx&os=pip
-if [[ "$VERSION_ID" = '20.04' ]]; then
+# ??? Ubuntu 24.04
+## ??? aktuell ??? ubunut need snapd for certbot´s "latest version"
+### ??? aktuell ??? without snapd i have to struggle with : https://github.com/certbot/website/pull/698 / https://certbot.eff.org/instructions?ws=nginx&os=pip
+if [[ "$VERSION_ID" = '24.04' ]]; then
 apt install snapd curl gnupg2 ca-certificates lsb-release ubuntu-keyring -y
 snap install core; snap refresh core
 snap install --classic certbot
@@ -222,7 +222,7 @@ ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
 
 clear
 echo ""
-echo -e " ${YELLOW}Get some coffee or beer, restore your energy, this can take a while ${ENDCOLOR}"
+echo -e " ${YELLOW}Get some coffee, restore your energy, this can take a while or just seconds :) ${ENDCOLOR}"
 echo ""
 openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
 clear
@@ -288,9 +288,10 @@ cd
 wget -O  add_small_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_small_website.sh
 chmod +x add_small_website.sh
 
-### open ports
-ufw allow 80/tcp
-ufw allow 443/tcp
+### open ports firewalld
+firewall-cmd --zone=public --add-port=80/tcp
+firewall-cmd --zone=public --add-port=443/tcp
+firewall-cmd --runtime-to-permanent
 
 clear
 
