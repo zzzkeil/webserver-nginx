@@ -164,7 +164,7 @@ proxy_set_header Host \$host;
 /usr/sbin/service nginx restart
 
 
-### letsencrypt 
+### ??????ß  letsencrypt   aktuell ?????
 certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --no-eff-email --key-type ecdsa --elliptic-curve secp384r1 --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --register-unsafely-without-email --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
@@ -227,6 +227,13 @@ index index.php index.html index.htm;
 location / {
 		try_files \$uri \$uri/ =404;
 	}
+
+location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
 
 # letsencrypt for $sitename
 ssl_certificate /etc/letsencrypt/live/$sitename/fullchain.pem;
