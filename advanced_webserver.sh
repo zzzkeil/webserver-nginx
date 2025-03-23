@@ -119,7 +119,7 @@ Signed-By: /etc/apt/keyrings/mariadb-keyring.pgp
 
 
 update_and_clean
-apt install nginx certbot python3-certbot-nginx mariadb-server php8.3 php8.3-fpm php8.3-cli -y
+apt install certbot python3-certbot-nginx mariadb-server php8.3 php8.3-fpm php8.3-cli -y
 fi  
 
 update_and_clean
@@ -288,10 +288,31 @@ sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
 
 ###mariadb install
 
+echo "--------------------------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------"
+read -p "Set your mariaDB port: " -e -i 3306 dbport
+echo "--------------------------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------"
+mv /etc/mysql/my.cnf /etc/mysql/my.cnf.bak
+echo "
+[mysqld]
+bind-address = 127.0.0.1
+port = $dbport
+
+slow_query_log_file    = /var/log/mysql/mariadb-slow.log
+long_query_time        = 10
+log_slow_rate_limit    = 1000
+log_slow_verbosity     = query_plan
+log-queries-not-using-indexes
+" > /etc/mysql/my.cnf
+mysql_secure_installation
+
+systemctl restart mariadb.service
+
 
 
 cd
-wget -O  add_small_website.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/add_small_website.sh
+wget -O  add_small_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/master/add_small_website.sh
 chmod +x add_small_website.sh
 
 ### open ports firewalld
