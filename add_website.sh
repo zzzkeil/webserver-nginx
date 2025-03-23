@@ -199,7 +199,7 @@ proxy_set_header Host \$host;
 
 
 ### ??????ß  letsencrypt   aktuell ?????
-certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --no-eff-email --key-type ecdsa --elliptic-curve secp384r1 --rsa-key-size 4096 -d $sitename -d www.$sitename
+certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --agree-tos --register-unsafely-without-email --key-type ecdsa --elliptic-curve secp384r1 -d $sitename -d www.$sitename
 #certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --register-unsafely-without-email --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
 
