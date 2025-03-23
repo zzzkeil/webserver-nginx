@@ -84,7 +84,7 @@ apt autoremove -y
 ### START ###
 # Debian 12
 if [[ "$VERSION_ID" = '12' ]]; then
-apt install curl gnupg2 ca-certificates apt-transport-https lsb-release debian-archive-keyring zlib imagick libxml memcached unzip libmagickcore-6.q16-6-extra -y
+apt install curl gnupg2 ca-certificates apt-transport-https lsb-release debian-archive-keyring zlib1g imagemagick libxml2 memcached unzip libmagickcore-6.q16-6-extra -y
 ###nginx repo
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
     | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
@@ -116,7 +116,7 @@ Signed-By: /etc/apt/keyrings/mariadb-keyring.pgp
 
 update_and_clean
 ###php overflow 4 WP and NC......
-apt install certbot python3-certbot-nginx mariadb-server php8.3 php8.3-fpm php8.3-cli php-mbstring php8.3-curl php8.3-dom php8.3-exif php8.3-fileinfo php8.3-hash php8.3-igbinary php8.3-imagick php8.3-intl php8.3-mbstring php8.3-openssl php8.3-xml php8.3-zip php8.3-apcu php8.3-memcached php8.3-opcache php8.3-redis php8.3-ftp php8.3-sockets php8.3-zlib php8.3-bc php8.3-filter php8.3-mysql php8.3-gd php8.3-gmp php8.3-bcmath php8.3-bz2 php8.3-common -y
+apt install certbot python3-certbot-nginx mariadb-server php8.3 php8.3-fpm php8.3-cli php-mbstring php8.3-curl php8.3-igbinary php8.3-imagick php8.3-intl php8.3-mbstring php8.3-xml php8.3-zip php8.3-apcu php8.3-memcached php8.3-opcache php8.3-redis php8.3-mysql php8.3-gd php8.3-gmp php8.3-bcmath php8.3-bz2 php8.3-common -y
 ###nginx last
 update_and_clean
 apt install nginx -y
