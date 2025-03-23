@@ -52,10 +52,10 @@ echo ""
 echo ""
 echo "--------------------------------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------------------------------"
-read -p "sql databasename: " -e -i db-$sitename$randomkey1 databasename
+read -p "sql databasename: " -e -i db$randomkey1-$sitename databasename
 echo "--------------------------------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------------------------------"
-read -p "sql databaseuser: " -e -i dbuser-$sitename$randomkey1 databaseuser
+read -p "sql databaseuser: " -e -i dbuser$randomkey1-$sitename databaseuser
 echo "--------------------------------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------------------------------"
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
@@ -199,7 +199,7 @@ proxy_set_header Host \$host;
 
 
 ### ??????ß  letsencrypt   aktuell ?????
-certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --agree-tos --register-unsafely-without-email --key-type ecdsa --elliptic-curve secp384r1 -d $sitename -d www.$sitename
+certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --agree-tos --register-unsafely-without-email --key-type ecdsa --elliptic-curve secp384r1 -d $sitename
 #certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --register-unsafely-without-email --rsa-key-size 4096 -d $sitename -d www.$sitename
 #certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
 
