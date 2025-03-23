@@ -28,7 +28,7 @@ echo ""
 echo ""
 echo  -e "                    ${RED}To EXIT this script press any key${ENDCOLOR}"
 echo ""
-echo  -e "                            ${GREEN}Press [Y] to begin${ENDCOLOR}"
+echo  -e "                            ${GREEN}Press [Y] to begin  -  script not testet - ${ENDCOLOR}"
 read -p "" -n 1 -r
 echo ""
 echo ""
