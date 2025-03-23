@@ -70,6 +70,9 @@ echo "$siteuser:$userpass" | chpasswd
 cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
 echo "
 Match User $siteuser
+   AuthenticationMethods password
+   PubkeyAuthentication no
+   PasswordAuthentication yes
    ChrootDirectory %h
    ForceCommand internal-sftp
    AllowTcpForwarding no
