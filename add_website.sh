@@ -53,7 +53,7 @@ read -p "sql databaseuser: " -e -i dbuser$randomkey1-$sitename databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
 
 
-mysql -uroot <<EOF
+mariadb -uroot <<EOF
 CREATE DATABASE $databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 CREATE USER '$databaseuser'@'localhost' identified by '$databaseuserpasswd';
 GRANT ALL PRIVILEGES on $databasename.* to '$databaseuser'@'localhost' identified by '$databaseuserpasswd';
