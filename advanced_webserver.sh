@@ -309,7 +309,7 @@ echo " Keep in mind: your MariaDB root password is still NOT set !"
 echo -e "${YELLOW} You should set a root password, when asked${ENDCOLOR}"
 echo "--------------------------------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------------------------------"
-mysql_secure_installation
+mariadb-secure-installation
 
 systemctl restart mariadb.service
 
