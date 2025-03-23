@@ -46,10 +46,10 @@ read -p "siteuser: " -e -i user-$sitename siteuser
 randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
 read -p "userpass: " -e -i $randomkeyuser userpass
 ################################################# WIP
-randomkey1=$(</dev/urandom tr -dc 'A-Za-z0-9' | head -c 4  ; echo)
+randomkey1=$(date +%s | cut -c 3-)
 randomkey2=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
-read -p "sql databasename: " -e -i db$randomkey1-$sitename databasename
-read -p "sql databaseuser: " -e -i dbuser$randomkey1-$sitename databaseuser
+read -p "sql databasename: " -e -i db$randomkey1 databasename
+read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
 
 
@@ -198,7 +198,7 @@ certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --agree-tos --re
 function copy4SSL() {
 cp /etc/nginx/conf.d/$sitename.conf /etc/nginx/conf.d/$sitename.conf.orig
 cp /etc/nginx/ssl.conf /etc/nginx/ssl.conf.orig
-rm root/script_backupfiles/sshd_config.bak01
+rm /root/script_backupfiles/sshd_config.bak01
 }
 ###
 function errorSSL() {
@@ -255,9 +255,9 @@ location / {
 	}
 
 location ~ \.php$ {
-    fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     include fastcgi_params;
+    fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 }
 
 # letsencrypt for $sitename
