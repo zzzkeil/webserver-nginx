@@ -14,7 +14,7 @@ ENDCOLOR="\e[0m"
 
 clear
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Advanced script to install nginx webserver on Debian 12 and Ubuntu 24.04      ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Advanced script to install nginx webserver on Debian 12                       ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}Settings : TLSv1.3 only | lets encrypt ecdsa | other mods | php | mariadb     ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}My base_setup.sh script is needed to setup this script correctly!!            ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
@@ -63,23 +63,14 @@ if [[ -e /root/base_setup.README ]]; then
 fi
 
 
-### check if Debian or Ubuntu
+### check if Debian
 . /etc/os-release
-if [[ "$ID" = 'debian' ]] || [[ "$ID" = 'ubuntu' ]]; then
+if [[ "$ID" = 'debian' ]]; then
    echo -e "OS ID check = ${GREEN}ok${ENDCOLOR}"
    else 
-   echo -e "${RED}This script is only for Debian and Ubuntu ${ENDCOLOR}"
+   echo -e "${RED}This script is only for Debian ${ENDCOLOR}"
    exit 1
 fi
-
-if [[ "$VERSION_ID" = '12' ]] || [[ "$VERSION_ID" = '24.04' ]]; then
-   echo -e "OS Versions check = ${GREEN}ok${ENDCOLOR}"
-   else
-   echo -e "${RED}Only Debian 12 and Ubuntu 24.04 supported ${ENDCOLOR}"
-
-   exit 1
-fi
-
 
 ###global function to update and cleanup the environment
 function update_and_clean() {
@@ -93,7 +84,8 @@ apt autoremove -y
 ### START ###
 # Debian 12
 if [[ "$VERSION_ID" = '12' ]]; then
-apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring -y
+apt install curl gnupg2 ca-certificates apt-transport-https lsb-release debian-archive-keyring -y
+###nginx repo
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
     | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
 echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
@@ -101,29 +93,35 @@ http://nginx.org/packages/mainline/debian `lsb_release -cs` nginx" \
     | sudo tee /etc/apt/sources.list.d/nginx.list
 echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
     | sudo tee /etc/apt/preferences.d/99nginx
+###sury php repo
+curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+dpkg -i /tmp/debsuryorg-archive-keyring.deb
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+###maria-db repo
+mkdir -p /etc/apt/keyrings
+curl -o /etc/apt/keyrings/mariadb-keyring.pgp 'https://mariadb.org/mariadb_release_signing_key.pgp'
+echo "
+# MariaDB 11.4 repository list - created 2025-03-23 09:39 UTC
+# https://mariadb.org/download/
+X-Repolib-Name: MariaDB
+Types: deb
+# deb.mariadb.org is a dynamic mirror if your preferred mirror goes offline. See https://mariadb.org/mirrorbits/ for details.
+# URIs: https://deb.mariadb.org/11.4/debian
+URIs: https://mirror1.hs-esslingen.de/pub/Mirrors/mariadb/repo/11.4/debian
+Suites: bookworm
+Components: main
+Signed-By: /etc/apt/keyrings/mariadb-keyring.pgp
+" > /etc/apt/sources.list.d/mariadb.sources
 
 
- 
+
+
+
+
 update_and_clean
-apt install nginx certbot python3-certbot -y
+apt install nginx certbot python3-certbot-nginx mariadb-server php8.3 php8.3-fpm php8.3-cli -y
 fi  
 
-# ??? Ubuntu 24.04
-## ??? aktuell ??? ubunut need snapd for certbot´s "latest version"
-### ??? aktuell ??? without snapd i have to struggle with : https://github.com/certbot/website/pull/698 / https://certbot.eff.org/instructions?ws=nginx&os=pip
-if [[ "$VERSION_ID" = '24.04' ]]; then
-apt install snapd curl gnupg2 ca-certificates lsb-release ubuntu-keyring -y
-snap install core; snap refresh core
-snap install --classic certbot
-ln -s /snap/bin/certbot /usr/bin/certbot
-curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
-    | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
-echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
-http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx" \
-    | sudo tee /etc/apt/sources.list.d/nginx.list
-echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
-    | sudo tee /etc/apt/preferences.d/99nginx
-    
 update_and_clean
 apt install nginx -y
 fi
