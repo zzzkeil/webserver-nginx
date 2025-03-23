@@ -45,19 +45,17 @@ read -p "sitename: " -e -i example.domain sitename
 read -p "siteuser: " -e -i user-$sitename siteuser
 randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
 read -p "userpass: " -e -i $randomkeyuser userpass
-
-
 ################################################# WIP
-randomkey1=$(date +%s | cut -c 3-)
+randomkey1=$(</dev/urandom tr -dc 'A-Za-z0-9' | head -c 4  ; echo)
 randomkey2=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
 echo ""
 echo ""
 echo "--------------------------------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------------------------------"
-read -p "sql databasename: " -e -i db$randomkey1 databasename
+read -p "sql databasename: " -e -i db-$sitename$randomkey1 databasename
 echo "--------------------------------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------------------------------"
-read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
+read -p "sql databaseuser: " -e -i dbuser-$sitename$randomkey1 databaseuser
 echo "--------------------------------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------------------------------"
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
@@ -115,6 +113,14 @@ echo "
 </body>
 </html>
 " > /home/$sitename/html/index.html
+
+
+echo "
+<?php
+phpinfo();
+?>
+" > /home/$sitename/html/checkphp.php
+
 
 echo "
 html {
@@ -219,7 +225,7 @@ echo -e " ${REDB}###############################################################
 echo -e ""
 echo -e " ${YELLOW}##############################################################################${ENDCOLOR}"
 echo -e " ${YELLOW}#${ENDCOLOR} Verify that both ports (80 + 443) are forwarded to this server!            ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
-echo -e " ${YELLOW}#${ENDCOLOR} Verify, your DNS points to your IP either!                                 ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
+echo -e " ${YELLOW}#${ENDCOLOR} Verify, your DNS points to your IP !                                       ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
 echo -e " ${YELLOW}#${ENDCOLOR} See the logfile /var/log/letsencrypt/letsencrypt.log                       ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
 echo -e " ${YELLOW}#${ENDCOLOR} Then retry...                                                              ${ENDCOLOR}${YELLOW}#${ENDCOLOR}"
 echo -e " ${YELLOW}##############################################################################${ENDCOLOR}"
@@ -287,7 +293,11 @@ echo "
 $sitename
 Adminname : $siteuser
 Adminpassword : $userpass
+Databasename : db-$sitename$randomkey1
+Databaseuser : dbuser-$sitename$randomkey1
+Databaseuserpasswd : $randomkey2 
 #
+
 " >> /root/website_user_list.txt
 
 
