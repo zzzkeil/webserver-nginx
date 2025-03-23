@@ -284,8 +284,8 @@ echo "
 $sitename
 Adminname : $siteuser
 Adminpassword : $userpass
-Databasename : db-$sitename$randomkey1
-Databaseuser : dbuser-$sitename$randomkey1
+Databasename : db$randomkey1
+Databaseuser : dbuser$randomkey1
 Databaseuserpasswd : $randomkey2 
 #
 
