@@ -43,11 +43,11 @@ fi
 ### site data
 read -p "sitename: " -e -i example.domain sitename
 read -p "siteuser: " -e -i user-$sitename siteuser
-randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
+randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9._' | head -c 32  ; echo)
 read -p "userpass: " -e -i $randomkeyuser userpass
 ################################################# WIP
 randomkey1=$(date +%s | cut -c 3-)
-randomkey2=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
+randomkey2=$(</dev/urandom tr -dc 'A-Za-z0-9._' | head -c 32  ; echo)
 read -p "sql databasename: " -e -i db$randomkey1 databasename
 read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
