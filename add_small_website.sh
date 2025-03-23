@@ -47,6 +47,34 @@ randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
 read -p "userpass: " -e -i $randomkeyuser userpass
 
 
+################################################# WIP
+randomkey1=$(date +%s | cut -c 3-)
+randomkey2=$(</dev/urandom tr -dc 'A-Za-z0-9.:_' | head -c 32  ; echo)
+echo ""
+echo ""
+echo "--------------------------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------"
+read -p "sql databasename: " -e -i db$randomkey1 databasename
+echo "--------------------------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------"
+read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
+echo "--------------------------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------"
+read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
+echo "--------------------------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------"
+
+mysql -uroot <<EOF
+CREATE DATABASE $databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE USER '$databaseuser'@'localhost' identified by '$databaseuserpasswd';
+GRANT ALL PRIVILEGES on $databasename.* to '$databaseuser'@'localhost' identified by '$databaseuserpasswd';
+FLUSH privileges;
+EOF
+
+
+###########################################################
+
+
 ###create sftp user
 useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
 echo "$siteuser:$userpass" | chpasswd
