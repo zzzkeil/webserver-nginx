@@ -316,8 +316,8 @@ systemctl restart mariadb.service
 
 
 cd
-wget -O  add_small_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/master/add_website.sh
-chmod +x add_small_website.sh
+wget -O  add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/master/add_website.sh
+chmod +x add_website.sh
 
 ### open ports firewalld
 firewall-cmd --zone=public --add-port=80/tcp
