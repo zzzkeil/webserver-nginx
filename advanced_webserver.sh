@@ -305,6 +305,15 @@ log_slow_rate_limit    = 1000
 log_slow_verbosity     = query_plan
 log-queries-not-using-indexes
 " > /etc/mysql/my.cnf
+
+
+echo "--------------------------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------"
+echo " Your database server will now be hardened - just follow the instructions."
+echo " Keep in mind: your MariaDB root password is still NOT set !"
+echo -e "${YELLOW} You should set a root password, when asked${ENDCOLOR}"
+echo "--------------------------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------------------------------"
 mysql_secure_installation
 
 systemctl restart mariadb.service
