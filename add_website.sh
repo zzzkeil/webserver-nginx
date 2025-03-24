@@ -254,7 +254,7 @@ listen [::]:443 ssl;
 http2 on;
 root /home/$sitename/html;
 index index.php index.html index.htm;
-client_max_body_size 25M;
+client_max_body_size 1G;
 location / {
 		try_files \$uri \$uri/ =404;
 	}
