@@ -250,7 +250,6 @@ return 301 https://\$host\$request_uri;
 server {
 server_name $sitename www.$sitename;
 listen 443 ssl;
-http2 on;
 listen [::]:443 ssl;
 http2 on;
 root /home/$sitename/html;
