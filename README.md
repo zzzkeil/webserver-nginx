@@ -1,43 +1,11 @@
-## A small nginx webserver with lets encrypt, tlsv1.3 only
-### base install, just for multiple html sites, with index.html placeholder 
-.... (no php, no db installed)
+## A nginx webserver with lets encrypt, tlsv1.3, php8.3, mariadb 11.4, .....
+### with index.html as placeholder 
 
-#### (beta) for Debian 11 ( in testing Ubuntu 20.04 )
-
-```
-wget -O  debian_small_webserver.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/debian_small_webserver.sh
-chmod +x debian_small_webserver.sh
-./debian_small_webserver.sh
+#### for Debian 12
 
 ```
-
-#### (work in progress, sometime)
+wget -O  debian_webserver.sh https://raw.githubusercontent.com/zzzkeil/webserver/refs/heads/master/advanced_webserver.sh
+chmod +x debian_webserver.sh
+./debian_webserver.sh
 
 ```
-addon to install php 8 and mariadb 10
-```
-
--
-
--
-
--
-
--
-
--
-
--
-
-
-old but with php8 and mariadb.....
-<details>
-<summary>example: click to expand!</summary>
-  
-##### For Ubuntu 18.04 / 20.04:
-```
-wget -O  webserver-nginx-php-mariadb.sh https://raw.githubusercontent.com/zzzkeil/webserver-nginx/master/old/webserver-nginx-php-mariadb.sh
-chmod +x webserver-nginx-php-mariadb.sh
-./webserver-nginx-php-mariadb.sh
-```
-</details>
