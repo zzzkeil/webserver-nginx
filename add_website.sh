@@ -261,7 +261,7 @@ location / {
 location ~ \.php$ {
     include fastcgi_params;
     fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
 }
 
 # letsencrypt for $sitename
