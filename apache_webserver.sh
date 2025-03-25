@@ -126,7 +126,12 @@ openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -node
 a2enmod ssl
 a2enmod rewrite
 a2enmod headers
-systemctl start apache2.service
+a2enmod proxy_fcgi setenvif
+a2enconf php8.3-fpm
+
+
+
+systemctl restart apache2.service
 
 
 ###enable NGINX autostart
