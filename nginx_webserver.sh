@@ -352,8 +352,8 @@ systemctl restart php8.3-fpm
 
 
 cd
-wget -O  add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/master/add_website.sh
-chmod +x add_website.sh
+wget -O  nginx_add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/master/nginx_add_website.sh
+chmod +x nginx_add_website.sh
 
 ### open ports firewalld
 firewall-cmd --zone=public --add-port=80/tcp
