@@ -294,6 +294,7 @@ a2ensite 000-base.conf
 
 ###enable  autostart
 systemctl enable apache2.service
+systemctl restart php8.3-fpm
 systemctl restart apache2.service
 
 
