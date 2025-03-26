@@ -134,8 +134,20 @@ hostipv4=$(hostname -I | awk '{print $1}')
 openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -nodes -keyout /etc/apache2/selfsigned-key.key -out /etc/apache2/selfsigned-cert.crt -subj "/C=DE/ST=Self/L=Signed/O=For/OU=You/CN=$hostipv4"
 
 cat <<EOF >> /etc/apache2/sites-available/000-base.conf
+<VirtualHost *:80>
+   ServerName 49.13.73.24
+   DocumentRoot /var/www/base
+
+<Directory /var/www/base/>
+  AllowOverride All
+</Directory>
+
+	ErrorLog /var/log/apache2/base_error.log
+	CustomLog /var/log/apache2/base_access.log combined
+</VirtualHost>
+
 <VirtualHost *:443>
-   ServerName $hostipv4
+   ServerName 49.13.73.24
    DocumentRoot /var/www/base
    SSLEngine on
    SSLCertificateFile /etc/apache2/selfsigned-cert.crt
@@ -150,8 +162,8 @@ cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 </IfModule>
 
 
- ErrorLog ${APACHE_LOG_DIR}/error.log
- CustomLog ${APACHE_LOG_DIR}/access.log combined
+	ErrorLog /var/log/apache2/base_error.log
+	CustomLog /var/log/apache2/base_ccess.log combined
 </VirtualHost>
 EOF
 
