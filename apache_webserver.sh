@@ -117,9 +117,7 @@ fi
 
 
 
-### self-signed  certificate
-hostipv4=$(hostname -I | awk '{print $1}')
-openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -nodes -keyout /etc/ssl/private/nc-selfsigned.key -out /etc/ssl/certs/nc-selfsigned.crt -subj "/C=DE/ST=SELF/L=SINGED/O=FOUR/OU=YOU/CN=$hostipv4"
+
 
 ### apache part
 
@@ -129,6 +127,10 @@ a2enmod headers
 a2enmod proxy_fcgi setenvif
 a2enconf php8.3-fpm
 
+mkdir /etc/apache2/tls
+### self-signed  certificate
+hostipv4=$(hostname -I | awk '{print $1}')
+openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -nodes -keyout /etc/apache2/tls/selfsigned-key.key -out /etc/apache2/tls/selfsigned-cert.crt -subj "/C=DE/ST=Self/L=Signed/O=fore/OU=You/CN=$hostipv4"
 
 
 systemctl restart apache2.service
