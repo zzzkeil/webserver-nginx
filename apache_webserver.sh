@@ -136,12 +136,12 @@ openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -node
 cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 <VirtualHost *:443>
    ServerName $hostipv4
-   DocumentRoot /var/www/html
+   DocumentRoot /var/www/base
    SSLEngine on
    SSLCertificateFile /etc/apache2/selfsigned-cert.crt
    SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
 
-<Directory /var/www/html/>
+<Directory /var/www/base/>
   AllowOverride All
 </Directory>
 
@@ -155,8 +155,141 @@ cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 </VirtualHost>
 EOF
 
-a2ensite 000-base.conf
 
+mkdir /var/www/base
+
+echo "
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="index.css">
+  <title>$sitename</title>
+</head>
+<body>
+<div class="bg"></div>
+<div class="bg bg2"></div>
+<div class="bg bg3"></div>
+<div class="content">
+<h1>Test page</h1>
+<p>This is a placeholder<p>
+<p>I'll be back, soon .....<p>
+</div>
+</body>
+</html>
+" > /var/www/base/index.html
+
+
+echo "
+<?php
+phpinfo();
+?>
+" > /var/www/base/checkphp.php
+
+
+echo "
+html {
+  height:100%;
+}
+
+body {
+  margin:0;
+}
+
+.bg {
+  animation:slide 10s ease-in-out infinite alternate;
+  background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
+  bottom:0;
+  left:-50%;
+  opacity:.5;
+  position:fixed;
+  right:-50%;
+  top:0;
+  z-index:-1;
+}
+
+.bg2 {
+  animation-direction:alternate-reverse;
+  animation-duration:20s;
+}
+
+.bg3 {
+  animation-duration:35s;
+}
+
+.content {
+  background-color:rgba(255,255,255,.8);
+  border-radius:.25em;
+  box-shadow:0 0 .25em rgba(0,0,0,.25);
+  box-sizing:border-box;
+  left:50%;
+  padding:10vmin;
+  position:fixed;
+  text-align:center;
+  top:50%;
+  transform:translate(-50%, -50%);
+}
+
+h1 {
+  font-family:monospace;
+}
+
+@keyframes slide {
+  0% {
+    transform:translateX(-25%);
+  }
+  100% {
+    transform:translateX(25%);
+  }
+}
+" > /var/www/base/index.css 
+
+
+##php settings 4 nextcloud wordpress
+cp /etc/php/8.3/apache2/php.ini /etc/php/8.3/apache2/php.ini.bak
+sed -i "s/memory_limit = 128M/memory_limit = 1G/" /etc/php/8.3/apache2/php.ini
+sed -i "s/output_buffering =.*/output_buffering = '0'/" /etc/php/8.3/apache2/php.ini
+sed -i "s/max_execution_time =.*/max_execution_time = 3600/" /etc/php/8.3/apache2/php.ini
+sed -i "s/max_input_time =.*/max_input_time = 3600/" /etc/php/8.3/apache2/php.ini
+sed -i "s/post_max_size =.*/post_max_size = 10G/" /etc/php/8.3/apache2/php.ini
+sed -i "s/upload_max_filesize =.*/upload_max_filesize = 10G/" /etc/php/8.3/apache2/php.ini
+#sed -i "s/;date.timezone.*/date.timezone = Europe\/\Berlin/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;cgi.fix_pathinfo.*/cgi.fix_pathinfo=0/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;session.cookie_secure.*/session.cookie_secure = True/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;opcache.enable=.*/opcache.enable=1/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;opcache.validate_timestamps=.*/opcache.validate_timestamps=0/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;opcache.enable_cli=.*/opcache.enable_cli=1/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;opcache.memory_consumption=.*/opcache.memory_consumption=256/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;opcache.interned_strings_buffer=.*/opcache.interned_strings_buffer=64/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;opcache.max_accelerated_files=.*/opcache.max_accelerated_files=100000/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;opcache.revalidate_freq=.*/opcache.revalidate_freq=60/" /etc/php/8.3/apache2/php.ini
+sed -i "s/;opcache.save_comments=.*/opcache.save_comments=1/" /etc/php/8.3/apache2/php.ini
+sed -i "s/max_file_uploads =.*/max_file_uploads = 20/" /etc/php/8.3/apache2/php.ini
+
+sed -i '$aopcache.jit=1255' /etc/php/8.3/apache2/php.ini
+sed -i '$aopcache.jit_buffer_size=256M' /etc/php/8.3/apache2/php.ini
+
+sed -i '$aapc.enable_cli=1' /etc/php/8.3/apache2/php.ini
+sed -i '$aapc.enable_cli=1' /etc/php/8.3/mods-available/apcu.ini
+sed -i '$aopcache.jit=1255' /etc/php/8.3/mods-available/opcache.ini
+sed -i '$aopcache.jit_buffer_size=256M' /etc/php/8.3/mods-available/opcache.ini
+
+
+sed -i '$a[mysql]' /etc/php/8.3/mods-available/mysqli.ini
+sed -i '$amysql.allow_local_infile=On' /etc/php/8.3/mods-available/mysqli.ini
+sed -i '$amysql.allow_persistent=On' /etc/php/8.3/mods-available/mysqli.ini
+sed -i '$amysql.cache_size=2000' /etc/php/8.3/mods-available/mysqli.ini
+sed -i '$amysql.max_persistent=-1' /etc/php/8.3/mods-available/mysqli.ini
+sed -i '$amysql.max_links=-1' /etc/php/8.3/mods-available/mysqli.ini
+sed -i '$amysql.default_port=3306' /etc/php/8.3/mods-available/mysqli.ini
+sed -i '$amysql.connect_timeout=60' /etc/php/8.3/mods-available/mysqli.ini
+sed -i '$amysql.trace_mode=Off' /etc/php/8.3/mods-available/mysqli.ini
+
+
+
+
+a2ensite 000-base.conf
 
 
 ###enable  autostart
