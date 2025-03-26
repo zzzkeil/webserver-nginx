@@ -127,34 +127,46 @@ a2enmod headers
 a2enmod proxy_fcgi setenvif
 a2enconf php8.3-fpm
 
-mkdir /etc/apache2/tls
+a2dissite 000-default.conf
+
 ### self-signed  certificate
 hostipv4=$(hostname -I | awk '{print $1}')
-openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -nodes -keyout /etc/apache2/tls/selfsigned-key.key -out /etc/apache2/tls/selfsigned-cert.crt -subj "/C=DE/ST=Self/L=Signed/O=fore/OU=You/CN=$hostipv4"
+openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -nodes -keyout /etc/apache2/selfsigned-key.key -out /etc/apache2/selfsigned-cert.crt -subj "/C=DE/ST=Self/L=Signed/O=For/OU=You/CN=$hostipv4"
+
+cat <<EOF >> /etc/apache2/sites-available/000-base.conf
+<VirtualHost *:443>
+   ServerName $hostipv4
+   DocumentRoot /var/www/html
+   SSLEngine on
+   SSLCertificateFile /etc/apache2/selfsigned-cert.crt
+   SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
+
+<Directory /var/www/html/>
+  AllowOverride All
+</Directory>
+
+<IfModule mod_headers.c>
+   Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
+</IfModule>
 
 
+ ErrorLog ${APACHE_LOG_DIR}/error.log
+ CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+a2ensite 000-base.conf
+
+
+
+###enable  autostart
+systemctl enable apache2.service
 systemctl restart apache2.service
 
 
-###enable NGINX autostart
-systemctl enable apache2.service
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+firewall-cmd --zone=public --add-port=80/tcp
+firewall-cmd --zone=public --add-port=443/tcp
+firewall-cmd --runtime-to-permanent
 
 
 echo "not ready"
