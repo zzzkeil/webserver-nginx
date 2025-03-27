@@ -271,7 +271,7 @@ sed -i "s/max_execution_time =.*/max_execution_time = 400/" /etc/php/8.3/fpm/php
 sed -i "s/max_input_time =.*/max_input_time = 400/" /etc/php/8.3/fpm/php.ini
 sed -i "s/post_max_size =.*/post_max_size = 2G/" /etc/php/8.3/fpm/php.ini
 sed -i "s/upload_max_filesize =.*/upload_max_filesize = 2G/" /etc/php/8.3/fpm/php.ini
-sed -i "s/;date.timezone.*/date.timezone = $timezone1\/\$timezone2/" /etc/php/8.3/fpm/php.ini
+sed -i "s/;date.timezone.*/date.timezone = $timezone1\/\\$timezone2/" /etc/php/8.3/fpm/php.ini
 sed -i "s/;cgi.fix_pathinfo.*/cgi.fix_pathinfo=0/" /etc/php/8.3/fpm/php.ini
 sed -i "s/;session.cookie_secure.*/session.cookie_secure = True/" /etc/php/8.3/fpm/php.ini
 sed -i "s/;opcache.enable=.*/opcache.enable=1/" /etc/php/8.3/fpm/php.ini
