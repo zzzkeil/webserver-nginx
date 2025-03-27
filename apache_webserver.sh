@@ -323,62 +323,11 @@ echo "not ready"
 exit 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-### prepare the NGINX
-mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak && touch /etc/nginx/nginx.conf
-echo "user www-data;
-worker_processes auto;
-pid /var/run/nginx.pid;
-events {
-worker_connections 1024;
-multi_accept on;
-use epoll;
-}
-http {
-server_names_hash_bucket_size 64;
-set_real_ip_from 127.0.0.1;
-real_ip_header X-Forwarded-For;
-real_ip_recursive on;
-include /etc/nginx/mime.types;
-#include /etc/nginx/proxy.conf;
-#include /etc/nginx/ssl.conf;
-#include /etc/nginx/header.conf;
-#include /etc/nginx/optimization.conf;
-default_type application/octet-stream;
-access_log /var/log/nginx/access.log;
-error_log /var/log/nginx/error.log warn;
-sendfile on;
-send_timeout 3600;
-tcp_nopush on;
-tcp_nodelay on;
-open_file_cache max=500 inactive=10m;
-open_file_cache_errors on;
-keepalive_timeout 65;
-reset_timedout_connection on;
-server_tokens off;
-resolver 127.0.0.53 valid=30s;
-resolver_timeout 5s;
-client_max_body_size 2G;
-include /etc/nginx/conf.d/*.conf;
-}
-" > /etc/nginx/nginx.conf
-
 ###create folders
-##mkdir -p /var/www/letsencrypt /etc/letsencrypt/rsa-certs /etc/letsencrypt/ecc-certs
+mkdir -p /var/www/letsencrypt /etc/letsencrypt/rsa-certs /etc/letsencrypt/ecc-certs
 
 ###apply permissions
-##chown -R www-data:www-data /var/www
+chown -R www-data:www-data /var/www
 
 
 ###restart apache
