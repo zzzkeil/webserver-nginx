@@ -124,6 +124,9 @@ fi
 a2enmod ssl
 a2enmod rewrite
 a2enmod headers
+a2enmod env
+a2enmod dir
+a2enmod mime
 a2enmod proxy_fcgi setenvif
 a2enconf php8.3-fpm
 
@@ -259,14 +262,16 @@ h1 {
 
 
 ##php settings 4 nextcloud wordpress
+timezone1=$(cat /etc/timezone | cut -d '/' -f 1)
+timezone2=$(cat /etc/timezone | cut -d '/' -f 2)
 cp /etc/php/8.3/fpm/php.ini /etc/php/8.3/fpm/php.ini.bak
-sed -i "s/memory_limit = 128M/memory_limit = 1G/" /etc/php/8.3/fpm/php.ini
+sed -i "s/memory_limit = 128M/memory_limit = 512M/" /etc/php/8.3/fpm/php.ini
 sed -i "s/output_buffering =.*/output_buffering = '0'/" /etc/php/8.3/fpm/php.ini
-sed -i "s/max_execution_time =.*/max_execution_time = 3600/" /etc/php/8.3/fpm/php.ini
-sed -i "s/max_input_time =.*/max_input_time = 3600/" /etc/php/8.3/fpm/php.ini
-sed -i "s/post_max_size =.*/post_max_size = 10G/" /etc/php/8.3/fpm/php.ini
-sed -i "s/upload_max_filesize =.*/upload_max_filesize = 10G/" /etc/php/8.3/fpm/php.ini
-sed -i "s/;date.timezone.*/date.timezone = Europe\/\Berlin/" /etc/php/8.3/fpm/php.ini
+sed -i "s/max_execution_time =.*/max_execution_time = 400/" /etc/php/8.3/fpm/php.ini
+sed -i "s/max_input_time =.*/max_input_time = 400/" /etc/php/8.3/fpm/php.ini
+sed -i "s/post_max_size =.*/post_max_size = 2G/" /etc/php/8.3/fpm/php.ini
+sed -i "s/upload_max_filesize =.*/upload_max_filesize = 2G/" /etc/php/8.3/fpm/php.ini
+sed -i "s/;date.timezone.*/date.timezone = $timezone1\/\$timezone2/" /etc/php/8.3/fpm/php.ini
 sed -i "s/;cgi.fix_pathinfo.*/cgi.fix_pathinfo=0/" /etc/php/8.3/fpm/php.ini
 sed -i "s/;session.cookie_secure.*/session.cookie_secure = True/" /etc/php/8.3/fpm/php.ini
 sed -i "s/;opcache.enable=.*/opcache.enable=1/" /etc/php/8.3/fpm/php.ini
@@ -294,7 +299,6 @@ sed -i '$amysql.allow_persistent=On' /etc/php/8.3/mods-available/mysqli.ini
 sed -i '$amysql.cache_size=2000' /etc/php/8.3/mods-available/mysqli.ini
 sed -i '$amysql.max_persistent=-1' /etc/php/8.3/mods-available/mysqli.ini
 sed -i '$amysql.max_links=-1' /etc/php/8.3/mods-available/mysqli.ini
-sed -i '$amysql.default_port=3306' /etc/php/8.3/mods-available/mysqli.ini
 sed -i '$amysql.connect_timeout=60' /etc/php/8.3/mods-available/mysqli.ini
 sed -i '$amysql.trace_mode=Off' /etc/php/8.3/mods-available/mysqli.ini
 
