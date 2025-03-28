@@ -116,11 +116,52 @@ apt install apache2 libapache2-mod-php certbot python3-certbot-apache mariadb-se
 fi
 
 
+#clear
+#echo ""
+#echo -e " ${YELLOW}Get some coffee, restore your energy, this can take a while or just seconds :) ${ENDCOLOR}"
+#echo ""
+#openssl dhparam -out /etc/apache2/dhparam.pem 4096
+#clear
+#echo -e " ${GREEN}:) done ${ENDCOLOR}"
+#####dummykey for testing
+echo "-----BEGIN DH PARAMETERS-----
+MIICCAKCAgEA+4jEuqUsyMD8lsnCB5HU0HTKpoXn45GQBm2E+lS6WGjqnJHrREMP
+P8z4LnBAMKzHmGRUs5SbelXghDqoHh18FkrEltZTUnJhhLe42HYdL3uSKhJdUN5n
+Ml8eHu+CX1CmmHTxJQZLSPV/nGtM5le6yT5zMDda2EEtH7x9wAzkkaaTGZTaQd+J
+G3vW6uuAIVwaWqDKUHmRzEpmcfgWTJFwRMHqGrVID4dOuoBAiKBmNxwsmEy61rBe
+dkWwgcuNShWSyerWJMxOMfqbh45pNx9/gLluZxDdDUgrvkkOgVqx7POWwWrl16vf
+LomR+GcqQs2q1B8qaMboSGUOgfAq4kLY5EyeSwbsIcn9SmEDAEGGafxNz8lxFlB2
+rqRQuWGj05A4nJWmgZanbwqmjvF+gBWERIHhJpIkGWRz2qUNiKaYiStX9ffSqRao
+veIcraRZqyGIJib/YqF7+wkyGDlosJ08dzwU4EqMUQE7EOvJa4L3V9e8tA0jHSQD
+IIuxsmo/AJVFYB3BSGgFC6mZ47ehn1Eqpb6goJaVh9BS4Ohj1wiL6p2u917bkvO7
+Hd42NTmIniebiGTRPwugwR/QIMG3cfqx5NrfnBkkVSE0umC+Nfj6dUXGZSo9p+HS
+DrypuQUHgJNWZIhhNhXnlFnFHb1ezRpxhKi5GGrgZPUvePMYi0ubHicCAQI=
+-----END DH PARAMETERS-----" > /etc/apache2/dhparam.pem
 
+
+
+mv /etc/apache2/mods-available/ssl.conf /etc/apache2/mods-available/ssl.conf.bak
+echo 'SSLProtocol -all +TLSv1.3
+SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
+SSLOpenSSLConfCmd DHParameters "/etc/apache2/dhparam.pem"
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+SSLRandomSeed startup builtin
+SSLRandomSeed startup file:/dev/urandom 512
+SSLRandomSeed connect builtin
+SSLRandomSeed connect file:/dev/urandom 512
+SSLHonorCipherOrder     off
+SSLSessionTickets       off
+AddType application/x-x509-ca-cert .crt
+AddType application/x-pkcs7-crl .crl
+SSLPassPhraseDialog  exec:/usr/share/apache2/ask-for-passphrase
+SSLSessionCache     shmcb:${APACHE_RUN_DIR}/ssl_scache(512000)
+SSLSessionCacheTimeout  300
+SSLUseStapling On
+SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
+' > /etc/apache2/mods-available/ssl.conf
 
 
 ### apache part
-
 a2enmod ssl
 a2enmod rewrite
 a2enmod headers
@@ -131,6 +172,7 @@ a2enmod proxy_fcgi setenvif
 a2enconf php8.3-fpm
 
 a2dissite 000-default.conf
+
 
 ### self-signed  certificate
 hostipv4=$(hostname -I | awk '{print $1}')
@@ -302,143 +344,10 @@ sed -i '$amysql.max_links=-1' /etc/php/8.3/mods-available/mysqli.ini
 sed -i '$amysql.connect_timeout=60' /etc/php/8.3/mods-available/mysqli.ini
 sed -i '$amysql.trace_mode=Off' /etc/php/8.3/mods-available/mysqli.ini
 
-
-
-
 a2ensite 000-base.conf
-
-
-###enable  autostart
-systemctl enable apache2.service
-systemctl restart php8.3-fpm
-systemctl restart apache2.service
-
-
-firewall-cmd --zone=public --add-port=80/tcp
-firewall-cmd --zone=public --add-port=443/tcp
-firewall-cmd --runtime-to-permanent
-
-
-echo "not ready"
-exit 
-
-
-###create folders
-mkdir -p /var/www/letsencrypt /etc/letsencrypt/rsa-certs /etc/letsencrypt/ecc-certs
 
 ###apply permissions
 chown -R www-data:www-data /var/www
-
-
-###restart apache
-systemctl restart apache2.service
-
-###install self signed certificates
-apt install ssl-cert -y
-
-###prepare NGINX for Site and SSL
-[ -f /etc/nginx/conf.d/default.conf ] && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
-touch /etc/nginx/conf.d/default.conf
-
-###create a Let's Encrypt vhost file
-touch /etc/nginx/conf.d/letsencrypt.conf
-echo "server
-{
-server_name 127.0.0.1;
-listen 127.0.0.1:81 default_server;
-charset utf-8;
-location ^~ /.well-known/acme-challenge
-{
-default_type text/plain;
-root /var/www/letsencrypt;
-}
-}
-" > /etc/nginx/conf.d/letsencrypt.conf
-
-
-###create a ssl configuration file
-echo "ssl_dhparam /etc/ssl/certs/dhparam.pem;
-ssl_session_timeout 60m;
-ssl_session_cache shared:SSL:30m;
-ssl_session_tickets off;
-# Mozilla modern configuration 2020 - the client chose the ciphers in TLSv1.3 only mode,  ok ....
-ssl_protocols TLSv1.3;
-ssl_prefer_server_ciphers off;
-#ssl_ecdh_curve X448:secp521r1:secp384r1;
-ssl_stapling on;
-ssl_stapling_verify on;
-#
-ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
-ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
-ssl_trusted_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
-" > /etc/nginx/ssl.conf
-
-###add a default dhparam.pem file // https://wiki.mozilla.org/Security/Server_Side_TLS#ffdhe4096
-
-clear
-echo ""
-echo -e " ${YELLOW}Get some coffee, restore your energy, this can take a while or just seconds :) ${ENDCOLOR}"
-echo ""
-openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
-clear
-echo -e " ${GREEN}:) done ${ENDCOLOR}"
-
-###create a proxy configuration file
-echo "proxy_set_header Host \$host;
-proxy_set_header X-Real-IP \$remote_addr;
-proxy_set_header X-Forwarded-Host \$host;
-proxy_set_header X-Forwarded-Protocol \$scheme;
-proxy_set_header X-Forwarded-For \$remote_addr;
-proxy_set_header X-Forwarded-Port \$server_port;
-proxy_set_header X-Forwarded-Server \$host;
-proxy_connect_timeout 3600;
-proxy_send_timeout 3600;
-proxy_read_timeout 3600;
-proxy_redirect off;
-"  > /etc/nginx/proxy.conf
-
-
-###create a header configuration file
-echo 'add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
-add_header X-Robots-Tag none; add_header X-Download-Options noopen;
-add_header X-Permitted-Cross-Domain-Policies none;
-add_header X-Content-Type-Options "nosniff" always;
-add_header X-XSS-Protection "1; mode=block" always;
-add_header Referrer-Policy "no-referrer" always;
-add_header X-Frame-Options "SAMEORIGIN";
-'  > /etc/nginx/header.conf
-
-
-###create a nginx optimization file
-echo 'fastcgi_hide_header X-Powered-By;
-fastcgi_read_timeout 3600;
-fastcgi_send_timeout 3600;
-fastcgi_connect_timeout 3600;
-fastcgi_buffers 64 64K;
-fastcgi_buffer_size 256k;
-fastcgi_busy_buffers_size 3840K;
-fastcgi_cache_key \$http_cookie\$request_method\$host\$request_uri;
-fastcgi_cache_use_stale error timeout invalid_header http_500;
-fastcgi_ignore_headers Cache-Control Expires Set-Cookie;
-gzip on;
-gzip_vary on;
-gzip_comp_level 4;
-gzip_min_length 256;
-gzip_proxied expired no-cache no-store private no_last_modified no_etag auth;
-gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject application/x-font-ttf application/x-web-app-manifest+json application/xhtml+xml application/xml font/opentype image/bmp image/svg+xml image/x-icon text/cache-manifest text/css text/plain text/vcard text/vnd.rim.location.xloc text/vtt text/x-component text/x-cross-domain-policy;
-gzip_disable "MSIE [1-6]\.";
-' > /etc/nginx/optimization.conf
-
-
-
-###enable all nginx configuration files
-sed -i s/\#\include/\include/g /etc/nginx/nginx.conf
-
-
-
-
-
-
 
 
 ###mariadb install
@@ -471,14 +380,13 @@ echo "--------------------------------------------------------------------------
 echo "--------------------------------------------------------------------------------------------------------"
 mariadb-secure-installation
 
+
+###enable  autostart
+systemctl enable apache2.service
+systemctl restart apache2.service
 systemctl restart mariadb.service
 systemctl restart php8.3-fpm
 
-
-
-cd
-wget -O  nginx_add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/master/nginx_add_website.sh
-chmod +x nginx_add_website.sh
 
 ### open ports firewalld
 firewall-cmd --zone=public --add-port=80/tcp
