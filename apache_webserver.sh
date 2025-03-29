@@ -393,10 +393,12 @@ firewall-cmd --zone=public --add-port=80/tcp
 firewall-cmd --zone=public --add-port=443/tcp
 firewall-cmd --runtime-to-permanent
 
-clear
+cd
+wget -O  apache2_add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/refs/heads/master/apache2_add_website.sh
+chmod +x apache2_add_website.sh
 
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}To add your first website run ./add_small_website.sh                       ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}To add your first website run ./apache2_add_website.sh                       ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 
 ### CleanUp
