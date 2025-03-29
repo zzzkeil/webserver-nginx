@@ -389,12 +389,12 @@ mv /etc/letsencrypt/options-ssl-apache.conf /etc/letsencrypt/options-ssl-apache.
 cat <<EOF >> /etc/letsencrypt/options-ssl-apache.conf
 SSLEngine on
 SSLProtocol             -all +TLSv1.3
-SSLProtocol             -all +TLSv1.3
 SSLOpenSSLConfCmd       Curves X25519:prime256v1:secp384r1
 SSLHonorCipherOrder     off
 SSLSessionTickets       off
 SSLOptions +StrictRequire
 SSLUseStapling On
+Header always set Strict-Transport-Security "max-age=63072000"
 LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" vhost_combined
 LogFormat "%v %h %l %u %t \"%r\" %>s %b" vhost_common
 EOF
