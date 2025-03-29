@@ -381,6 +381,25 @@ echo "--------------------------------------------------------------------------
 mariadb-secure-installation
 
 
+
+###certbot options-ssl-apache mod
+mv /etc/letsencrypt/options-ssl-apache.conf /etc/letsencrypt/options-ssl-apache.conf.bak
+
+cat <<EOF >> /etc/letsencrypt/options-ssl-apache.conf
+SSLEngine on
+SSLProtocol             -all +TLSv1.3
+SSLProtocol             -all +TLSv1.3
+SSLOpenSSLConfCmd       Curves X25519:prime256v1:secp384r1
+SSLHonorCipherOrder     off
+SSLSessionTickets       off
+SSLOptions +StrictRequire
+SSLUseStapling On
+SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" vhost_combined
+LogFormat "%v %h %l %u %t \"%r\" %>s %b" vhost_common
+EOF
+
+
 ###enable  autostart
 systemctl enable apache2.service
 systemctl restart apache2.service
