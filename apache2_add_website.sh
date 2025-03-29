@@ -52,6 +52,43 @@ read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
 
 
+
+cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
+<VirtualHost *:80>
+   ServerName $sitename
+   DocumentRoot /var/www/$sitename/html
+
+<Directory /var/www/$sitename/html/>
+  AllowOverride All
+</Directory>
+
+	ErrorLog /var/log/apache2/$sitename_error.log
+	CustomLog /var/log/apache2/$sitename_access.log combined
+</VirtualHost>
+
+<VirtualHost *:443>
+   ServerName $sitename
+   DocumentRoot /var/www/$sitename/html
+   SSLEngine on
+   SSLCertificateFile /etc/apache2/selfsigned-cert.crt
+   SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
+
+<Directory /var/www/$sitename/html/>
+  AllowOverride All
+</Directory>
+
+<IfModule mod_headers.c>
+   Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
+</IfModule>
+
+
+	ErrorLog /var/log/apache2/$sitename_httpserror.log
+	CustomLog /var/log/apache2/$sitename_httpsaccess.log combined
+</VirtualHost>
+EOF
+
+
+
 mariadb -uroot <<EOF
 CREATE DATABASE $databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 CREATE USER '$databaseuser'@'localhost' identified by '$databaseuserpasswd';
@@ -64,7 +101,7 @@ EOF
 
 
 ###create sftp user
-useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
+useradd -g www-data -m -d /var/www/$sitename -s /sbin/nologin $siteuser
 echo "$siteuser:$userpass" | chpasswd
 cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
 echo "
@@ -78,12 +115,14 @@ Match User $siteuser
    X11Forwarding no
    " >> /etc/ssh/sshd_config
 
-chown root: /home/$sitename
-chmod 755 /home/$sitename
+
+mkdir /var/www/$sitename
+chown root: /var/www/$sitename
+chmod 755 /var/www/$sitename
    
 ###create folders and files
-mkdir /home/$sitename/html
-chmod 775 /home/$sitename/html
+mkdir /var/www/$sitename/html
+chmod 775 /var/www/$sitename/html
 
 echo "
 <!doctype html>
@@ -105,14 +144,14 @@ echo "
 </div>
 </body>
 </html>
-" > /home/$sitename/html/index.html
+" > /var/www/$sitename/html/index.html
 
 
 echo "
 <?php
 phpinfo();
 ?>
-" > /home/$sitename/html/checkphp.php
+" > /var/www/$sitename/html/checkphp.php
 
 
 echo "
@@ -170,10 +209,10 @@ h1 {
     transform:translateX(25%);
   }
 }
-" > /home/$sitename/html/index.css 
-chown -R $siteuser:www-data /home/$sitename/html
+" > /var/www/$sitename/html/index.css 
+chown -R $siteuser:www-data /var/www/$sitename/html
 
-
+a2ensite $sitename.conf
 
 ### ??????ß  letsencrypt   aktuell ?????
 certbot --apache --agree-tos --register-unsafely-without-email --key-type ecdsa --elliptic-curve secp384r1 -d $sitename
