@@ -165,6 +165,7 @@ SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 a2enmod ssl
 a2enmod rewrite
 a2enmod headers
+a2enmod socache_shmcb
 a2enmod env
 a2enmod dir
 a2enmod mime
