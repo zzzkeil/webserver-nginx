@@ -57,6 +57,7 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 <VirtualHost *:80>
    ServerName $sitename
     RewriteEngine On
+    DocumentRoot /var/www/$sitename/html
     ErrorLog /var/log/apache2/$sitename_error.log
     CustomLog /var/log/apache2/$sitename_access.log combined
 </VirtualHost>
