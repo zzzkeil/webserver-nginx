@@ -70,8 +70,8 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
    ServerName $sitename
    DocumentRoot /var/www/$sitename/html
    SSLEngine on
-   SSLCertificateFile /etc/apache2/selfsigned-cert.crt
-   SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
+   #SSLCertificateFile /etc/apache2/selfsigned-cert.crt
+   #SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
 
 <Directory /var/www/$sitename/html/>
   AllowOverride All
