@@ -395,7 +395,6 @@ SSLHonorCipherOrder     off
 SSLSessionTickets       off
 SSLOptions +StrictRequire
 SSLUseStapling On
-SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" vhost_combined
 LogFormat "%v %h %l %u %t \"%r\" %>s %b" vhost_common
 EOF
