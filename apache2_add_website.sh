@@ -65,26 +65,6 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 	ErrorLog /var/log/apache2/$sitename_error.log
 	CustomLog /var/log/apache2/$sitename_access.log combined
 </VirtualHost>
-
-<VirtualHost *:443>
-   ServerName $sitename
-   DocumentRoot /var/www/$sitename/html
-   SSLEngine on
-   #SSLCertificateFile /etc/apache2/selfsigned-cert.crt
-   #SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
-
-<Directory /var/www/$sitename/html/>
-  AllowOverride All
-</Directory>
-
-<IfModule mod_headers.c>
-   Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
-</IfModule>
-
-
-	ErrorLog /var/log/apache2/$sitename_httpserror.log
-	CustomLog /var/log/apache2/$sitename_httpsaccess.log combined
-</VirtualHost>
 EOF
 
 
