@@ -56,14 +56,11 @@ read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
 cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 <VirtualHost *:80>
    ServerName $sitename
-   DocumentRoot /var/www/$sitename/html
-
-<Directory /var/www/$sitename/html/>
-  AllowOverride All
-</Directory>
-
-	ErrorLog /var/log/apache2/$sitename_error.log
-	CustomLog /var/log/apache2/$sitename_access.log combined
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/.well-known/acme-challenge/
+    RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,QSA,L]
+    ErrorLog /var/log/apache2/$sitename_error.log
+    CustomLog /var/log/apache2/$sitename_access.log combined
 </VirtualHost>
 EOF
 
