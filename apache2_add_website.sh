@@ -116,7 +116,7 @@ Match User $siteuser
    " >> /etc/ssh/sshd_config
 
 
-mkdir /var/www/$sitename
+
 chown root: /var/www/$sitename
 chmod 755 /var/www/$sitename
    
@@ -213,6 +213,7 @@ h1 {
 chown -R $siteuser:www-data /var/www/$sitename/html
 
 a2ensite $sitename.conf
+systemctl reload apache2
 
 ### ??????ß  letsencrypt   aktuell ?????
 certbot --apache --agree-tos --register-unsafely-without-email --key-type ecdsa --elliptic-curve secp384r1 -d $sitename
