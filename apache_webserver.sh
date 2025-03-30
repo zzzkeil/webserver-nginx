@@ -211,9 +211,8 @@ cat <<EOF >> /etc/apache2/sites-available/000-base.conf
    AllowOverride All
    Require all granted
 </Directory>
-
-	ErrorLog /var/log/apache2/base_error.log
-	CustomLog /var/log/apache2/base_access.log combined
+ ErrorLog /var/log/apache2/base_error.log
+ CustomLog /var/log/apache2/base_access.log combined
 </VirtualHost>
 
 <VirtualHost *:443>
@@ -232,8 +231,8 @@ cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 <IfModule mod_headers.c>
    Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
 </IfModule>
-	ErrorLog /var/log/apache2/base_error.log
-	CustomLog /var/log/apache2/base_ccess.log combined
+ ErrorLog /var/log/apache2/base_https_error.log
+ CustomLog /var/log/apache2/base_https_access.log combined
 </VirtualHost>
 EOF
 
