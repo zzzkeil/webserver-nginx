@@ -129,10 +129,10 @@ systemctl restart sshd.service
 
 echo "
 $sitename
-Adminname : $siteuser
+Adminname : user$randomkey1$randomkey2 
 Adminpassword : $userpass
-Databasename : db$randomkey1
-Databaseuser : dbuser$randomkey1
+Databasename : db$randomkey2$randomkey1
+Databaseuser : dbuser$randomkey1$randomkey2
 Databaseuserpasswd : $randomkey2 
 #
 
