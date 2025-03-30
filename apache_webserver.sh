@@ -367,8 +367,9 @@ sed -i '$amysql.trace_mode=Off' /etc/php/8.3/mods-available/mysqli.ini
 
 a2ensite 000-base.conf
 
-###apply permissions lets encrypt?
+###apply permissions
 chown -R www-data:www-data /var/www
+chown -R www-data:www-data /home/$hostipv4/
 
 
 ###mariadb install
