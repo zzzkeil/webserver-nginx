@@ -53,7 +53,7 @@ read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
 
 
 ###create sftp user
-useradd -g www-data -m -d /home/www/$sitename -s /sbin/nologin $siteuser
+useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
 echo "$siteuser:$userpass" | chpasswd
 cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
 echo "
@@ -67,22 +67,25 @@ Match User $siteuser
    X11Forwarding no
    " >> /etc/ssh/sshd_config
 
+chown root: /home/$sitename
+chmod 755 /home/$sitename
+
 ###create folders and files
-mkdir -p /home/www/$sitename/html
-chmod 775 /home/www/$sitename/html
+mkdir /home/$sitename/html
+chmod 775 /home/$sitename/html
 
 cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 <VirtualHost *:80>
   ServerName $sitename
   RewriteEngine On
-  DocumentRoot /home/www/$sitename/html    
-<Directory /home/www/$sitename/html>
+  DocumentRoot /home/$sitename/html    
+<Directory /home/$sitename/html>
   Options Indexes FollowSymLinks
   AllowOverride All
   Require all granted
 </Directory>
-  ErrorLog /home/www/$sitename/error.log
-  CustomLog /home/www/$sitename/access.log combined
+  ErrorLog /home/$sitename/error.log
+  CustomLog /home/$sitename/access.log combined
 </VirtualHost>
 EOF
 
@@ -108,15 +111,15 @@ echo "
 </center>
 </body>
 </html>
-" > /home/www/$sitename/html/index.html
+" > /home/$sitename/html/index.html
 
 echo "
 <?php
 phpinfo();
 ?>
-" > /home/www/$sitename/html/checkphp.php
+" > /home/$sitename/html/checkphp.php
  
-chown -R $siteuser:www-data /home/www/$sitename/html
+chown -R $siteuser:www-data /home/$sitename/html
 
 a2ensite $sitename.conf
 systemctl reload apache2
