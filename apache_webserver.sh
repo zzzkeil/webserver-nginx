@@ -202,24 +202,20 @@ a2dissite 000-default.conf
 
 hostipv4=$(hostname -I | awk '{print $1}')
 
-mkdir -p /home/www/
-chown root:root /home/www/
-chmod 0755 /home/www/
-
-mkdir -p /home/www/$hostipv4/html
+mkdir -p /home/$hostipv4/html
 
 cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 <VirtualHost *:80>
    ServerName $hostipv4
-   DocumentRoot /home/www/$hostipv4/html
+   DocumentRoot /home/$hostipv4/html
 
-<Directory /home/www/$hostipv4/html>
+<Directory /home/$hostipv4/html>
    Options Indexes FollowSymLinks
    AllowOverride All
    Require all granted
 </Directory>
- ErrorLog /home/www/$hostipv4/error.log
- CustomLog /home/www/$hostipv4/access.log combined
+ ErrorLog /home/$hostipv4/error.log
+ CustomLog /home/$hostipv4/access.log combined
 </VirtualHost>
 EOF
 
@@ -240,14 +236,14 @@ echo "
 </center>
 </body>
 </html>
-" > /home/www/$hostipv4/html/index.html
+" > /home/$hostipv4/html/index.html
 
 
 echo "
 <?php
 phpinfo();
 ?>
-" > /home/www/$hostipv4/html/checkphp.php
+" > /home/$hostipv4/html/checkphp.php
 
 
 ##php settings 4 nextcloud wordpress
@@ -295,7 +291,7 @@ a2ensite 000-base.conf
 
 ###apply permissions
 chown -R www-data:www-data /var/www
-chown -R www-data:www-data /home/www/$hostipv4
+chown -R www-data:www-data /home/$hostipv4
 
 
 ###mariadb install
