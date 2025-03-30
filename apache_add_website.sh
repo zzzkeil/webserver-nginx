@@ -133,7 +133,7 @@ Adminname : user$randomkey1$randomkey2
 Adminpassword : $userpass
 Databasename : db$randomkey2$randomkey1
 Databaseuser : dbuser$randomkey1$randomkey2
-Databaseuserpasswd : $randomkey2 
+Databaseuserpasswd : $randomkey3
 #
 
 " >> /root/website_user_list.txt
