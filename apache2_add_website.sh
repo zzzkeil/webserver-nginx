@@ -62,8 +62,8 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
   AllowOverride All
   Require all granted
 </Directory>
- ErrorLog /var/log/apache2/$sitename_error.log
- CustomLog /var/log/apache2/$sitename_access.log combined
+ ErrorLog /var/log/apache2/$sitename\_error.log
+ CustomLog /var/log/apache2/$sitename\_access.log combined
 </VirtualHost>
 EOF
 
