@@ -144,7 +144,7 @@ mv /etc/apache2/mods-available/ssl.conf /etc/apache2/mods-available/ssl.conf.bak
 echo 'SSLProtocol -all +TLSv1.3
 SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
 SSLOpenSSLConfCmd DHParameters "/etc/apache2/dhparam.pem"
-SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+SSLCipherSuite TLSv1.3 TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
 SSLRandomSeed startup builtin
 SSLRandomSeed startup file:/dev/urandom 512
 SSLRandomSeed connect builtin
@@ -159,6 +159,28 @@ SSLSessionCacheTimeout  300
 SSLUseStapling On
 SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 ' > /etc/apache2/mods-available/ssl.conf
+
+###certbot options-ssl-apache mod
+mv /etc/letsencrypt/options-ssl-apache.conf /etc/letsencrypt/options-ssl-apache.conf.bak
+
+cat <<EOF >> /etc/letsencrypt/options-ssl-apache.conf
+SSLEngine on
+SSLProtocol             -all +TLSv1.3
+SSLCipherSuite TLSv1.3 TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
+SSLOpenSSLConfCmd DHParameters "/etc/apache2/dhparam.pem"
+SSLHonorCipherOrder     off
+SSLSessionTickets       off
+SSLCompression          off
+SSLUseStapling          on
+SSLOptions +StrictRequire
+Header always set Strict-Transport-Security "max-age=63072000"
+Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" vhost_combined
+LogFormat "%v %h %l %u %t \"%r\" %>s %b" vhost_common
+EOF
+
 
 
 ### apache part
@@ -181,10 +203,10 @@ openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -node
 
 cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 <VirtualHost *:80>
-   ServerName 49.13.73.24
-   DocumentRoot /var/www/base
+   ServerName $hostipv4
+   DocumentRoot /home/$hostipv4
 
-<Directory /var/www/base/>
+<Directory /home/$hostipv4/>
   AllowOverride All
 </Directory>
 
@@ -193,28 +215,26 @@ cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 </VirtualHost>
 
 <VirtualHost *:443>
-   ServerName 49.13.73.24
-   DocumentRoot /var/www/base
+   ServerName $hostipv4
+   DocumentRoot /home/$hostipv4
    SSLEngine on
    SSLCertificateFile /etc/apache2/selfsigned-cert.crt
    SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
 
-<Directory /var/www/base/>
+<Directory /home/$hostipv4/>
   AllowOverride All
 </Directory>
 
 <IfModule mod_headers.c>
    Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
 </IfModule>
-
-
 	ErrorLog /var/log/apache2/base_error.log
 	CustomLog /var/log/apache2/base_ccess.log combined
 </VirtualHost>
 EOF
 
 
-mkdir /var/www/base
+mkdir /home/$hostipv4
 
 echo "
 <!doctype html>
@@ -236,14 +256,14 @@ echo "
 </div>
 </body>
 </html>
-" > /var/www/base/index.html
+" > /home/$hostipv4/index.html
 
 
 echo "
 <?php
 phpinfo();
 ?>
-" > /var/www/base/checkphp.php
+" > /home/$hostipv4/checkphp.php
 
 
 echo "
@@ -301,7 +321,7 @@ h1 {
     transform:translateX(25%);
   }
 }
-" > /var/www/base/index.css 
+" > /home/$hostipv4/index.css 
 
 
 ##php settings 4 nextcloud wordpress
@@ -347,7 +367,7 @@ sed -i '$amysql.trace_mode=Off' /etc/php/8.3/mods-available/mysqli.ini
 
 a2ensite 000-base.conf
 
-###apply permissions
+###apply permissions lets encrypt?
 chown -R www-data:www-data /var/www
 
 
@@ -380,28 +400,6 @@ echo -e "${YELLOW} You should set a root password, when asked${ENDCOLOR}"
 echo "--------------------------------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------------------------------"
 mariadb-secure-installation
-
-
-
-###certbot options-ssl-apache mod
-mv /etc/letsencrypt/options-ssl-apache.conf /etc/letsencrypt/options-ssl-apache.conf.bak
-
-cat <<EOF >> /etc/letsencrypt/options-ssl-apache.conf
-SSLEngine on
-SSLProtocol             -all +TLSv1.3
-SSLCipherSuite TLSv1.3 TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
-SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
-SSLHonorCipherOrder     off
-SSLSessionTickets       off
-SSLCompression          off
-SSLUseStapling          on
-SSLOptions +StrictRequire
-Header always set Strict-Transport-Security "max-age=63072000"
-Header always set X-Frame-Options DENY
-Header always set X-Content-Type-Options nosniff
-LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" vhost_combined
-LogFormat "%v %h %l %u %t \"%r\" %>s %b" vhost_common
-EOF
 
 
 ###enable  autostart
