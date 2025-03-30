@@ -207,7 +207,9 @@ cat <<EOF >> /etc/apache2/sites-available/000-base.conf
    DocumentRoot /home/$hostipv4
 
 <Directory /home/$hostipv4/>
-  AllowOverride All
+   Options Indexes FollowSymLinks
+   AllowOverride All
+   Require all granted
 </Directory>
 
 	ErrorLog /var/log/apache2/base_error.log
@@ -222,7 +224,9 @@ cat <<EOF >> /etc/apache2/sites-available/000-base.conf
    SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
 
 <Directory /home/$hostipv4/>
-  AllowOverride All
+   Options Indexes FollowSymLinks
+   AllowOverride All
+   Require all granted
 </Directory>
 
 <IfModule mod_headers.c>
