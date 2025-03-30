@@ -68,7 +68,7 @@ Match User $siteuser
    " >> /etc/ssh/sshd_config
 
 ###create folders and files
-mkdir /home/www/$sitename/html
+mkdir -p /home/www/$sitename/html
 chmod 775 /home/www/$sitename/html
 
 cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
