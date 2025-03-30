@@ -407,7 +407,7 @@ wget -O  apache2_add_website.sh https://raw.githubusercontent.com/zzzkeil/webser
 chmod +x apache2_add_website.sh
 
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
-echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}To add your first website run ./apache2_add_website.sh                      ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
+echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}To add your first website run ./apache_add_website.sh                      ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 
 ### CleanUp
