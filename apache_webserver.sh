@@ -198,8 +198,9 @@ a2dissite 000-default.conf
 
 
 ### self-signed  certificate
+#openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -nodes -keyout /etc/apache2/selfsigned-key.key -out /etc/apache2/selfsigned-cert.crt -subj "/C=DE/ST=Self/L=Signed/O=For/OU=You/CN=$hostipv4"
+
 hostipv4=$(hostname -I | awk '{print $1}')
-openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -nodes -keyout /etc/apache2/selfsigned-key.key -out /etc/apache2/selfsigned-cert.crt -subj "/C=DE/ST=Self/L=Signed/O=For/OU=You/CN=$hostipv4"
 
 mkdir -p /home/www/
 chown root:root /home/www/
@@ -228,19 +229,15 @@ echo "
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="index.css">
   <title>$sitename</title>
 </head>
 <body>
-<div class="bg"></div>
-<div class="bg bg2"></div>
-<div class="bg bg3"></div>
-<div class="content">
+<center>
+<br>
 <h1>Test page</h1>
-<p>This is a placeholder<p>
-<p>I'll be back, soon .....<p>
-</div>
+<p>Webserver is running<p>
+<p>cu<p>
+</center>
 </body>
 </html>
 " > /home/www/$hostipv4/html/index.html
@@ -251,64 +248,6 @@ echo "
 phpinfo();
 ?>
 " > /home/www/$hostipv4/html/checkphp.php
-
-
-echo "
-html {
-  height:100%;
-}
-
-body {
-  margin:0;
-}
-
-.bg {
-  animation:slide 10s ease-in-out infinite alternate;
-  background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
-  bottom:0;
-  left:-50%;
-  opacity:.5;
-  position:fixed;
-  right:-50%;
-  top:0;
-  z-index:-1;
-}
-
-.bg2 {
-  animation-direction:alternate-reverse;
-  animation-duration:20s;
-}
-
-.bg3 {
-  animation-duration:35s;
-}
-
-.content {
-  background-color:rgba(255,255,255,.8);
-  border-radius:.25em;
-  box-shadow:0 0 .25em rgba(0,0,0,.25);
-  box-sizing:border-box;
-  left:50%;
-  padding:10vmin;
-  position:fixed;
-  text-align:center;
-  top:50%;
-  transform:translate(-50%, -50%);
-}
-
-h1 {
-  font-family:monospace;
-}
-
-@keyframes slide {
-  0% {
-    transform:translateX(-25%);
-  }
-  100% {
-    transform:translateX(25%);
-  }
-}
-" > /home/www/$hostipv4/html/index.css 
 
 
 ##php settings 4 nextcloud wordpress
@@ -403,8 +342,8 @@ firewall-cmd --zone=public --add-port=443/tcp
 firewall-cmd --runtime-to-permanent
 
 cd
-wget -O  apache2_add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/refs/heads/master/apache2_add_website.sh
-chmod +x apache2_add_website.sh
+wget -O  apache_add_website.sh https://raw.githubusercontent.com/zzzkeil/webserver/refs/heads/master/apache_add_website.sh
+chmod +x apache_add_website.sh
 
 echo -e " ${GRAYB}##############################################################################${ENDCOLOR}"
 echo -e " ${GRAYB}#${ENDCOLOR} ${GREEN}To add your first website run ./apache_add_website.sh                      ${ENDCOLOR}${GRAYB}#${ENDCOLOR}"
