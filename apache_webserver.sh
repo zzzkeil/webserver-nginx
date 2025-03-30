@@ -206,7 +206,7 @@ mkdir -p /home/www/
 chown root:root /home/www/
 chmod 0755 /home/www/
 
-mkdir /home/www/$hostipv4/html
+mkdir -p /home/www/$hostipv4/html
 
 cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 <VirtualHost *:80>
