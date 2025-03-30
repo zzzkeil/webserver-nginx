@@ -51,19 +51,37 @@ read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
 
 
+###create sftp user
+useradd -g www-data -m -d /home/www/$sitename $siteuser
+echo "$siteuser:$userpass" | chpasswd
+cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
+echo "
+Match User $siteuser
+   AuthenticationMethods password
+   PubkeyAuthentication no
+   PasswordAuthentication yes
+   ChrootDirectory /home/www/$sitename
+   #ForceCommand internal-sftp
+   AllowTcpForwarding no
+   X11Forwarding no
+   " >> /etc/ssh/sshd_config
+
+###create folders and files
+mkdir /home/www/$sitename/html
+chmod 775 /home/www/$sitename/html
 
 cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 <VirtualHost *:80>
    ServerName $sitename
     RewriteEngine On
-    DocumentRoot /home/$sitename/html    
- <Directory /home/$sitename/html>
+    DocumentRoot /home/www/$sitename/html    
+ <Directory /home/www/$sitename/html>
   Options Indexes FollowSymLinks
   AllowOverride All
   Require all granted
 </Directory>
- ErrorLog /var/log/apache2/$sitename\_error.log
- CustomLog /var/log/apache2/$sitename\_access.log combined
+ ErrorLog /home/www/$sitename/error.log
+ CustomLog /home/www/$sitename/access.log combined
 </VirtualHost>
 EOF
 
@@ -76,31 +94,6 @@ GRANT ALL PRIVILEGES on $databasename.* to '$databaseuser'@'localhost' identifie
 FLUSH privileges;
 EOF
 
-
-###########################################################
-
-
-###create sftp user
-useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
-echo "$siteuser:$userpass" | chpasswd
-cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
-echo "
-Match User $siteuser
-   AuthenticationMethods password
-   PubkeyAuthentication no
-   PasswordAuthentication yes
-   ChrootDirectory %h
-   ForceCommand internal-sftp
-   AllowTcpForwarding no
-   X11Forwarding no
-   " >> /etc/ssh/sshd_config
-
-chown root: /home/$sitename
-chmod 755 /home/$sitename
-   
-###create folders and files
-mkdir /home/$sitename/html
-chmod 775 /home/$sitename/html
 
 echo "
 <!doctype html>
@@ -122,14 +115,14 @@ echo "
 </div>
 </body>
 </html>
-" > /home/$sitename/html/index.html
+" > /home/www/$sitename/html/index.html
 
 
 echo "
 <?php
 phpinfo();
 ?>
-" > /home/$sitename/html/checkphp.php
+" > /home/www/$sitename/html/checkphp.php
 
 
 echo "
@@ -187,9 +180,9 @@ h1 {
     transform:translateX(25%);
   }
 }
-" > /home/$sitename/html/index.css 
+" > /home/www/$sitename/html/index.css 
 
-chown -R $siteuser:www-data /home/$sitename/html
+chown -R $siteuser:www-data /home/www/$sitename/html
 
 a2ensite $sitename.conf
 systemctl reload apache2
