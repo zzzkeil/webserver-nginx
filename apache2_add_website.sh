@@ -56,9 +56,14 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 <VirtualHost *:80>
    ServerName $sitename
     RewriteEngine On
-    DocumentRoot /home/$sitename/html
-    ErrorLog /var/log/apache2/$sitename_error.log
-    CustomLog /var/log/apache2/$sitename_access.log combined
+    DocumentRoot /home/$sitename/html    
+ <Directory /home/$sitename/html>
+  Options Indexes FollowSymLinks
+  AllowOverride All
+  Require all granted
+</Directory>
+ ErrorLog /var/log/apache2/$sitename_error.log
+ CustomLog /var/log/apache2/$sitename_access.log combined
 </VirtualHost>
 EOF
 
@@ -89,8 +94,6 @@ Match User $siteuser
    AllowTcpForwarding no
    X11Forwarding no
    " >> /etc/ssh/sshd_config
-
-
 
 chown root: /home/$sitename
 chmod 755 /home/$sitename
