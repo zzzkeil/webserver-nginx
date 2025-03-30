@@ -52,7 +52,7 @@ read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
 
 
 ###create sftp user
-useradd -g www-data -m -d /home/www/$sitename $siteuser
+useradd -g www-data -m -d /home/www/$sitename -s /sbin/nologin $siteuser
 echo "$siteuser:$userpass" | chpasswd
 cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
 echo "
@@ -60,8 +60,8 @@ Match User $siteuser
    AuthenticationMethods password
    PubkeyAuthentication no
    PasswordAuthentication yes
-   ChrootDirectory /home/www/$sitename
-   #ForceCommand internal-sftp
+   ChrootDirectory %h
+   ForceCommand internal-sftp
    AllowTcpForwarding no
    X11Forwarding no
    " >> /etc/ssh/sshd_config
