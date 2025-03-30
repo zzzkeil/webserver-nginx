@@ -40,13 +40,12 @@ fi
 
 
 ### site data
-read -p "sitename: " -e -i example.domain sitename
-read -p "siteuser: " -e -i user-$sitename siteuser
 randomkeyuser=$(</dev/urandom tr -dc 'A-Za-z0-9._' | head -c 32  ; echo)
-read -p "userpass: " -e -i $randomkeyuser userpass
-################################################# WIP
 randomkey1=$(date +%s | cut -c 3-)
 randomkey2=$(</dev/urandom tr -dc 'A-Za-z0-9._' | head -c 32  ; echo)
+read -p "sitename: " -e -i example.domain sitename
+read -p "siteuser: " -e -i user$randomkey1 siteuser
+read -p "userpass: " -e -i $randomkeyuser userpass
 read -p "sql databasename: " -e -i db$randomkey1 databasename
 read -p "sql databaseuser: " -e -i dbuser$randomkey1 databaseuser
 read -p "sql databaseuserpasswd: " -e -i $randomkey2 databaseuserpasswd
@@ -57,7 +56,7 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 <VirtualHost *:80>
    ServerName $sitename
     RewriteEngine On
-    DocumentRoot /var/www/$sitename/html
+    DocumentRoot /home/$sitename/html
     ErrorLog /var/log/apache2/$sitename_error.log
     CustomLog /var/log/apache2/$sitename_access.log combined
 </VirtualHost>
@@ -77,7 +76,7 @@ EOF
 
 
 ###create sftp user
-useradd -g www-data -m -d /var/www/$sitename -s /sbin/nologin $siteuser
+useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
 echo "$siteuser:$userpass" | chpasswd
 cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
 echo "
@@ -93,12 +92,12 @@ Match User $siteuser
 
 
 
-chown root: /var/www/$sitename
-chmod 755 /var/www/$sitename
+chown root: /home/$sitename
+chmod 755 /home/$sitename
    
 ###create folders and files
-mkdir /var/www/$sitename/html
-chmod 775 /var/www/$sitename/html
+mkdir /home/$sitename/html
+chmod 775 /home/$sitename/html
 
 echo "
 <!doctype html>
@@ -120,14 +119,14 @@ echo "
 </div>
 </body>
 </html>
-" > /var/www/$sitename/html/index.html
+" > /home/$sitename/html/index.html
 
 
 echo "
 <?php
 phpinfo();
 ?>
-" > /var/www/$sitename/html/checkphp.php
+" > /home/$sitename/html/checkphp.php
 
 
 echo "
@@ -185,18 +184,15 @@ h1 {
     transform:translateX(25%);
   }
 }
-" > /var/www/$sitename/html/index.css 
-chown -R $siteuser:www-data /var/www/$sitename/html
+" > /home/$sitename/html/index.css 
+
+chown -R $siteuser:www-data /home/$sitename/html
 
 a2ensite $sitename.conf
 systemctl reload apache2
 
-### ??????ß  letsencrypt   aktuell ?????
+###letsencrypt
 certbot --apache --agree-tos --register-unsafely-without-email --key-type ecdsa --elliptic-curve secp384r1 -d $sitename
-#certbot certonly -a webroot --webroot-path=/var/www/letsencrypt --register-unsafely-without-email --rsa-key-size 4096 -d $sitename -d www.$sitename
-#certbot certonly --dry-run -a webroot --webroot-path=/var/www/letsencrypt --rsa-key-size 4096 -d $sitename
-
-
 
 systemctl restart apache2.service
 systemctl restart sshd.service
