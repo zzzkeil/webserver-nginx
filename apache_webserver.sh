@@ -201,43 +201,27 @@ a2dissite 000-default.conf
 hostipv4=$(hostname -I | awk '{print $1}')
 openssl req -x509 -newkey ec:<(openssl ecparam -name secp384r1) -days 1800 -nodes -keyout /etc/apache2/selfsigned-key.key -out /etc/apache2/selfsigned-cert.crt -subj "/C=DE/ST=Self/L=Signed/O=For/OU=You/CN=$hostipv4"
 
+mkdir -p /home/www/
+chown root:root /home/www/
+chmod 0755 /home/www/
+
+mkdir /home/www/$hostipv4/html
+
 cat <<EOF >> /etc/apache2/sites-available/000-base.conf
 <VirtualHost *:80>
    ServerName $hostipv4
-   DocumentRoot /home/$hostipv4
+   DocumentRoot /home/www/$hostipv4/html
 
-<Directory /home/$hostipv4/>
+<Directory /home/www/$hostipv4/html>
    Options Indexes FollowSymLinks
    AllowOverride All
    Require all granted
 </Directory>
- ErrorLog /var/log/apache2/$hostipv4\_error.log
- CustomLog /var/log/apache2/$hostipv4\_access.log combined
-</VirtualHost>
-
-<VirtualHost *:443>
-   ServerName $hostipv4
-   DocumentRoot /home/$hostipv4
-   SSLEngine on
-   SSLCertificateFile /etc/apache2/selfsigned-cert.crt
-   SSLCertificateKeyFile /etc/apache2/selfsigned-key.key
-
-<Directory /home/$hostipv4/>
-   Options Indexes FollowSymLinks
-   AllowOverride All
-   Require all granted
-</Directory>
-
-<IfModule mod_headers.c>
-   Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
-</IfModule>
- ErrorLog /var/log/apache2/$hostipv4\_https_error.log
- CustomLog /var/log/apache2/$hostipv4\_https_access.log combined
+ ErrorLog /home/www/$hostipv4/error.log
+ CustomLog /home/www/$hostipv4/access.log combined
 </VirtualHost>
 EOF
 
-
-mkdir /home/$hostipv4
 
 echo "
 <!doctype html>
@@ -259,14 +243,14 @@ echo "
 </div>
 </body>
 </html>
-" > /home/$hostipv4/index.html
+" > /home/www/$hostipv4/html/index.html
 
 
 echo "
 <?php
 phpinfo();
 ?>
-" > /home/$hostipv4/checkphp.php
+" > /home/www/$hostipv4/html/checkphp.php
 
 
 echo "
@@ -324,7 +308,7 @@ h1 {
     transform:translateX(25%);
   }
 }
-" > /home/$hostipv4/index.css 
+" > /home/www/$hostipv4/html/index.css 
 
 
 ##php settings 4 nextcloud wordpress
@@ -372,7 +356,7 @@ a2ensite 000-base.conf
 
 ###apply permissions
 chown -R www-data:www-data /var/www
-chown -R www-data:www-data /home/$hostipv4/
+chown -R www-data:www-data /home/www/$hostipv4
 
 
 ###mariadb install
