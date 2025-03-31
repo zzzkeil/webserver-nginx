@@ -53,7 +53,9 @@ read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
 
 
 ###create sftp user
-useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
+#useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
+useradd -g $sitename -m -d /home/$sitename -s /sbin/nologin $siteuser
+echo "$siteuser:$userpass" | chpasswd
 echo "$siteuser:$userpass" | chpasswd
 cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
 echo "
@@ -86,6 +88,9 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 </Directory>
   ErrorLog /home/$sitename/error.log
   CustomLog /home/$sitename/access.log combined
+<IfModule mpm_itk_module>
+AssignUserId $siteuser $sitename
+</IfModule>
 </VirtualHost>
 EOF
 
@@ -119,7 +124,7 @@ phpinfo();
 ?>
 " > /home/$sitename/html/checkphp.php
  
-chown -R $siteuser:www-data /home/$sitename/html
+chown -R $siteuser:$sitename /home/$sitename/html
 
 a2ensite $sitename.conf
 systemctl reload apache2
