@@ -54,6 +54,7 @@ read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
 
 ###create sftp user
 #useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
+groupadd $sitename
 useradd -g $sitename -m -d /home/$sitename -s /sbin/nologin $siteuser
 echo "$siteuser:$userpass" | chpasswd
 cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
@@ -79,7 +80,7 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 <VirtualHost *:80>
   ServerName $sitename
   RewriteEngine On
-  DocumentRoot /home/$sitename/html    
+  DocumentRoot /home/$sitename/html  
 <Directory /home/$sitename/html>
   Options Indexes FollowSymLinks
   AllowOverride All
@@ -122,7 +123,7 @@ echo "
 phpinfo();
 ?>
 " > /home/$sitename/html/checkphp.php
- 
+
 chown -R $siteuser:$sitename /home/$sitename/html
 
 a2ensite $sitename.conf
@@ -136,7 +137,7 @@ systemctl restart sshd.service
 
 echo "
 $sitename
-Adminname : user$randomkey1$randomkey2 
+Adminname : user$randomkey1$randomkey2
 Adminpassword : $userpass
 Databasename : db$randomkey2$randomkey1
 Databaseuser : dbuser$randomkey1$randomkey2
