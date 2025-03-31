@@ -56,7 +56,6 @@ read -p "sql databaseuserpasswd: " -e -i $randomkey3 databaseuserpasswd
 #useradd -g www-data -m -d /home/$sitename -s /sbin/nologin $siteuser
 useradd -g $sitename -m -d /home/$sitename -s /sbin/nologin $siteuser
 echo "$siteuser:$userpass" | chpasswd
-echo "$siteuser:$userpass" | chpasswd
 cp /etc/ssh/sshd_config /root/script_backupfiles/sshd_config.bak01
 echo "
 Match User $siteuser
