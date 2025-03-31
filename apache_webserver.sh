@@ -74,17 +74,17 @@ fi
 
 ###global function to update and cleanup the environment
 function update_and_clean() {
-apt update
-apt upgrade -y
-apt autoclean -y
-apt autoremove -y
+apt-get update
+apt-get upgrade -y
+apt-get autoclean -y
+apt-get autoremove -y
 }
 
 
 ### START ###
 # Debian 12
 if [[ "$VERSION_ID" = '12' ]]; then
-apt install curl gnupg2 ca-certificates apt-transport-https lsb-release debian-archive-keyring zlib1g imagemagick libxml2 memcached unzip libmagickcore-6.q16-6-extra -y
+apt-get install curl gnupg2 ca-certificates apt-transport-https lsb-release debian-archive-keyring zlib1g imagemagick libxml2 memcached unzip libmagickcore-6.q16-6-extra -y
 
 ###sury apache repo 
 curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
@@ -112,7 +112,7 @@ Signed-By: /etc/apt/keyrings/mariadb-keyring.pgp
 
 update_and_clean
 ###php overflow 4 WP and NC......
-apt install apache2 libapache2-mpm-itk libapache2-mod-php certbot python3-certbot-apache mariadb-server php8.3 php8.3-fpm php8.3-cli php-mbstring php8.3-curl php8.3-igbinary php8.3-imagick php8.3-ssh2 php8.3-intl php8.3-mbstring php8.3-xml php8.3-zip php8.3-apcu php8.3-memcached php8.3-opcache php8.3-redis php8.3-mysql php8.3-gd php8.3-gmp php8.3-bcmath php8.3-bz2 php8.3-common -y
+apt-get install apache2 libapache2-mpm-itk libapache2-mod-php certbot python3-certbot-apache mariadb-server php8.3 php8.3-fpm php8.3-cli php-mbstring php8.3-curl php8.3-igbinary php8.3-imagick php8.3-ssh2 php8.3-intl php8.3-mbstring php8.3-xml php8.3-zip php8.3-apcu php8.3-memcached php8.3-opcache php8.3-redis php8.3-mysql php8.3-gd php8.3-gmp php8.3-bcmath php8.3-bz2 php8.3-common -y
 fi
 
 
