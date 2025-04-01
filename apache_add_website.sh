@@ -79,6 +79,10 @@ chmod 775 /home/$sitename/html
 cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 <VirtualHost *:80>
   ServerName $sitename
+    VHostPrivs $siteuser $sitename
+    VHostGroup $sitename
+    VHostCGIMode Secure
+    PrivilegesMode SECURE
   RewriteEngine On
   DocumentRoot /home/$sitename/html  
 <Directory /home/$sitename/html>
@@ -88,9 +92,6 @@ cat <<EOF >> /etc/apache2/sites-available/$sitename.conf
 </Directory>
   ErrorLog /home/$sitename/error.log
   CustomLog /home/$sitename/access.log combined
-<IfModule mpm_itk_module>
-AssignUserId $siteuser $sitename
-</IfModule>
 </VirtualHost>
 EOF
 
